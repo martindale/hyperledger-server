@@ -2,6 +2,7 @@ class Currency < ActiveRecord::Base
   
   has_many    :accounts
   belongs_to  :primary_account, class_name: 'Account'
+  has_many    :issues
   
   validates_presence_of :public_key, :name, :url
   
