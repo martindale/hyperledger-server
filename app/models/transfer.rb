@@ -1,6 +1,6 @@
 class Transfer < ActiveRecord::Base
   
-  validates_presence_of :source_id, :destination_id, :amount
+  validates_presence_of :source, :destination, :amount
   
   belongs_to :source, class_name: 'Account'
   belongs_to :destination, class_name: 'Account'
