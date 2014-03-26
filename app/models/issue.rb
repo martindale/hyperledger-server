@@ -1,6 +1,6 @@
 class Issue < ActiveRecord::Base
   
-  validates_presence_of :currency_id, :amount
+  validates_presence_of :currency, :amount
   
   belongs_to :currency
   
