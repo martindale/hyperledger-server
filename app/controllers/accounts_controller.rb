@@ -11,7 +11,9 @@ class AccountsController < ApplicationController
   end
 
   def create
-    currency = Account.create(params[:account])
+    currency = Currency.find_by_name(params[:currency])
+    account = Account.create(public_key: params[:public_key], currency: currency)
+    respond_with account
   end
   
 end

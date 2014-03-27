@@ -11,7 +11,14 @@ class CurrenciesController < ApplicationController
   end
 
   def create
-    currency = Currency.create(params[:currency])
+    currency = Currency.create(currency_params)
+    respond_with currency
+  end
+  
+private
+  
+  def currency_params
+    params.permit(:public_key, :name, :url)
   end
   
 end
