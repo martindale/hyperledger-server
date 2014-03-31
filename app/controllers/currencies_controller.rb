@@ -11,8 +11,11 @@ class CurrenciesController < ApplicationController
   end
 
   def create
+    OpenSSL::PKey::RSA.new(params[:public_key])
     currency = Currency.create(currency_params)
     respond_with currency
+  rescue
+    head :unprocessable_entity
   end
   
 private
