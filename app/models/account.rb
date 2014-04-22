@@ -12,8 +12,4 @@ class Account < ActiveRecord::Base
     account.balance = 0
   end
   
-  def as_json(opts)
-    super(only: [:code, :balance, :currency, :public_key])
-  end
-  
 end

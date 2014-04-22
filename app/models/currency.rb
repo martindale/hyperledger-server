@@ -12,9 +12,5 @@ class Currency < ActiveRecord::Base
     acc = Account.create(public_key: currency.public_key, currency: currency)
     currency.update_attribute :primary_account, acc
   end
-    
-  def as_json(options)
-    super(only: [:name, :public_key, :url])
-  end
   
 end
