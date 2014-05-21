@@ -1,8 +1,8 @@
 class Account < ActiveRecord::Base
     
-  belongs_to :currency
+  belongs_to :ledger
   
-  validates_presence_of :currency, :public_key
+  validates_presence_of :ledger, :public_key
   
   validates_uniqueness_of :public_key
   

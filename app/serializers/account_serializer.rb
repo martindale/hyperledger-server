@@ -1,8 +1,8 @@
 class AccountSerializer < ActiveModel::Serializer
-  attributes :code, :balance, :currency, :public_key
+  attributes :code, :balance, :ledger, :public_key
   
-  def currency
-    object.currency.name
+  def ledger
+    object.ledger.name
   end
   
 end

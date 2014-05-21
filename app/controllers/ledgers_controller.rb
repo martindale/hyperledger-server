@@ -1,26 +1,26 @@
-class CurrenciesController < ApplicationController
+class LedgersController < ApplicationController
   
   respond_to :json
   
   def show
-    respond_with Currency.find_by_name(params[:name])
+    respond_with Ledger.find_by_name(params[:name])
   end
 
   def index
-    respond_with Currency.all
+    respond_with Ledger.all
   end
 
   def create
     OpenSSL::PKey::RSA.new(params[:public_key])
-    currency = Currency.create(currency_params)
-    respond_with currency
+    ledger = Ledger.create(ledger_params)
+    respond_with ledger
   rescue
     head :unprocessable_entity
   end
   
 private
   
-  def currency_params
+  def ledger_params
     params.permit(:public_key, :name, :url)
   end
   

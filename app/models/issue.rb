@@ -1,11 +1,11 @@
 class Issue < ActiveRecord::Base
   
-  validates_presence_of :currency, :amount
+  validates_presence_of :ledger, :amount
   
-  belongs_to :currency
+  belongs_to :ledger
   
   before_create do |issue|
-    acc = issue.currency.primary_account
+    acc = issue.ledger.primary_account
     acc.update_attribute :balance, (acc.balance + issue.amount)
   end
   

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CurrenciesControllerTest < ActionController::TestCase
+class LedgersControllerTest < ActionController::TestCase
   
   setup do
     key = OpenSSL::PKey::RSA.new 2048
@@ -18,7 +18,7 @@ class CurrenciesControllerTest < ActionController::TestCase
   end
   
   test "duplicate POST should not be successful" do
-    Currency.create(public_key: @public_key, name: 'Moonbucks', url: 'moonbucks.com')
+    Ledger.create(public_key: @public_key, name: 'Moonbucks', url: 'moonbucks.com')
     post :create, public_key: @public_key, name: 'Moonbucks', url: 'moonbucks.com', format: :json
     refute_equal '201', response.code
   end

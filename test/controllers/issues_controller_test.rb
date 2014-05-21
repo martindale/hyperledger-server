@@ -5,7 +5,7 @@ class IssuesControllerTest < ActionController::TestCase
   setup do
     @key = OpenSSL::PKey::RSA.new(2048)
     @public_key = @key.public_key.to_pem
-    Currency.create!(public_key: @public_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    Ledger.create!(public_key: @public_key, name: 'Moonbucks', url: 'http://moonbucks.com')
   end
   
   test "valid POST should be successful" do
@@ -31,14 +31,14 @@ class IssuesControllerTest < ActionController::TestCase
 private
   
   def valid_post
-    data = { currency: 'Moonbucks', amount: 1000 }
+    data = { ledger: 'Moonbucks', amount: 1000 }
     sig  = Base64.encode64 @key.sign(OpenSSL::Digest::SHA256.new, data.to_json)
     post :create, issue: data, signature: sig, format: :json
   end
   
   def invalid_post
     bad_key = OpenSSL::PKey::RSA.new(2048)
-    data = { currency: 'Moonbucks', amount: 1000 }
+    data = { ledger: 'Moonbucks', amount: 1000 }
     sig  = Base64.encode64 bad_key.sign(OpenSSL::Digest::SHA256.new, data.to_json)
     post :create, issue: data, signature: sig, format: :json
   end

@@ -8,11 +8,11 @@ class TransfersControllerTest < ActionController::TestCase
     @pk1 = @k1.public_key.to_pem
     @pk2 = @k2.public_key.to_pem
     @digest = OpenSSL::Digest::SHA256.new
-
-    c = Currency.create!(public_key: @pk1, name: 'Moonbucks', url: 'http://moonbucks.com')
-    Issue.create!(currency: c, amount: 2000)
-    @s = c.primary_account
-    @d = Account.create!(public_key: @pk2, currency: c)
+    
+    l = Ledger.create!(public_key: @pk1, name: 'Moonbucks', url: 'http://moonbucks.com')
+    Issue.create!(ledger: l, amount: 2000)
+    @s = l.primary_account
+    @d = Account.create!(public_key: @pk2, ledger: l)
   end
   
   test "valid POST should be successful" do

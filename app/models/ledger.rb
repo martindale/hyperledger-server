@@ -1,4 +1,4 @@
-class Currency < ActiveRecord::Base
+class Ledger < ActiveRecord::Base
   
   has_many    :accounts
   belongs_to  :primary_account, class_name: 'Account'
@@ -8,9 +8,9 @@ class Currency < ActiveRecord::Base
   
   validates_uniqueness_of :name
   
-  after_create do |currency|
-    acc = Account.create(public_key: currency.public_key, currency: currency)
-    currency.update_attribute :primary_account, acc
+  after_create do |ledger|
+    acc = Account.create(public_key: ledger.public_key, ledger: ledger)
+    ledger.update_attribute :primary_account, acc
   end
   
 end

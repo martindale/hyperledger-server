@@ -12,8 +12,8 @@ class AccountsController < ApplicationController
 
   def create
     OpenSSL::PKey::RSA.new(params[:public_key])
-    currency = Currency.find_by_name(params[:currency])
-    account = Account.create(public_key: params[:public_key], currency: currency)
+    ledger = Ledger.find_by_name(params[:ledger])
+    account = Account.create(public_key: params[:public_key], ledger: ledger)
     respond_with account
   rescue
     head :unprocessable_entity

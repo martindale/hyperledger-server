@@ -1,4 +1,4 @@
-class CurrencySerializer < ActiveModel::Serializer
+class LedgerSerializer < ActiveModel::Serializer
   attributes :name, :public_key, :url
   has_one :primary_account
 end
