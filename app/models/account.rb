@@ -3,8 +3,7 @@ class Account < ActiveRecord::Base
   belongs_to :ledger
   
   validates_presence_of :ledger, :public_key
-  
-  validates_uniqueness_of :public_key
+  validates :public_key, uniqueness: true, rsa_public_key: true
   
   before_create do |account|
     digest = Digest::MD5.new.digest(account.public_key)
