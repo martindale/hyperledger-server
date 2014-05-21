@@ -11,11 +11,8 @@ class LedgersController < ApplicationController
   end
 
   def create
-    OpenSSL::PKey::RSA.new(params[:public_key])
     ledger = Ledger.create(ledger_params)
     respond_with ledger
-  rescue
-    head :unprocessable_entity
   end
   
 private
