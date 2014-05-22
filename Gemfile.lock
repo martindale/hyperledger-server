@@ -31,6 +31,11 @@ GEM
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
     builder (3.2.2)
+    dotenv (0.11.1)
+      dotenv-deployment (~> 0.0.2)
+    dotenv-deployment (0.0.2)
+    dotenv-rails (0.11.1)
+      dotenv (= 0.11.1)
     erubis (2.7.0)
     hike (1.2.3)
     i18n (0.6.9)
@@ -90,6 +95,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers (~> 0.8)
+  dotenv-rails
   pg
   rails (= 4.1.1)
   sdoc

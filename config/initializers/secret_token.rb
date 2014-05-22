@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Mintet::Application.config.secret_key_base = 'f6b56a7f0ca6cb04ce08d86d91db469c4a38d98cfcca271e56f6022a9381cb88ac9d1e2923a298f8c8df370d2aeba95885952811e1a2c0c47d76ba9df53c54f5'
+Mintet::Application.config.secret_key_base = ENV['SECRET_KEY_BASE']
