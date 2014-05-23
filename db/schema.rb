@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140519014600) do
+ActiveRecord::Schema.define(version: 20140523041204) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,9 @@ ActiveRecord::Schema.define(version: 20140519014600) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "accounts", ["code"], name: "index_accounts_on_code", unique: true, using: :btree
+  add_index "accounts", ["public_key"], name: "index_accounts_on_public_key", unique: true, using: :btree
 
   create_table "issues", force: true do |t|
     t.integer  "ledger_id"
@@ -40,6 +43,9 @@ ActiveRecord::Schema.define(version: 20140519014600) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "ledgers", ["name"], name: "index_ledgers_on_name", unique: true, using: :btree
+  add_index "ledgers", ["public_key"], name: "index_ledgers_on_public_key", unique: true, using: :btree
 
   create_table "transfers", force: true do |t|
     t.integer  "amount"

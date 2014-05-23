@@ -5,9 +5,17 @@ class Transfer < ActiveRecord::Base
   belongs_to :source, class_name: 'Account'
   belongs_to :destination, class_name: 'Account'
   
-  before_create do |transfer|
-    source.update_attribute :balance, (source.balance - transfer.amount)
-    destination.update_attribute :balance, (destination.balance + transfer.amount)
+  after_create do |transfer|
+    transaction do
+      source.lock!
+      destination.lock!
+      
+      source.balance -= transfer.amount
+      destination.balance += transfer.amount
+      
+      source.save!
+      destination.save!
+    end
   end
   
 end
