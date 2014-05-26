@@ -17,3 +17,4 @@
 
 # Ignore environment files
 .env
+config/pool.yml
