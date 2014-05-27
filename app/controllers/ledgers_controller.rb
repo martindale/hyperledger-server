@@ -18,7 +18,7 @@ class LedgersController < ApplicationController
 private
   
   def ledger_params
-    params.permit(:public_key, :name, :url)
+    params.require(:ledger).permit(:public_key, :name, :url)
   end
   
 end
