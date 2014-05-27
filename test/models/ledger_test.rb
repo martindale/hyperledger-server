@@ -23,7 +23,7 @@ class LedgerTest < ActiveSupport::TestCase
     ConsensusPool.quorum = 1
     pub_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
     ledger = Ledger.create(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
-    ledger.add_confirmation!
+    ledger.add_confirmation
     assert ledger.confirmed?
   end
 end

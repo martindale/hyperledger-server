@@ -11,7 +11,12 @@ class LedgersController < ApplicationController
   end
 
   def create
-    ledger = Ledger.create(ledger_params)
+    if confirmation_params.any?
+      ledger = Ledger.find_or_create_by(ledger_params)
+      ledger.add_confirmation
+    else
+      ledger = Ledger.create(ledger_params)
+    end
     respond_with ledger
   end
   
@@ -19,6 +24,10 @@ private
   
   def ledger_params
     params.require(:ledger).permit(:public_key, :name, :url)
+  end
+  
+  def confirmation_params
+    params.permit(:confirmation_signature)
   end
   
 end
