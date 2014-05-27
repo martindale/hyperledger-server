@@ -11,4 +11,19 @@ class LedgerTest < ActiveSupport::TestCase
     ledger = Ledger.create(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
     assert ledger.valid?
   end
+  
+  test "ledgers must not be confirmed if validation threshold not reached" do
+    ConsensusPool.quorum = 1
+    pub_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
+    ledger = Ledger.create(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    refute ledger.confirmed?
+  end
+  
+  test "ledgers must be confirmed if validation threshold reached" do
+    ConsensusPool.quorum = 1
+    pub_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
+    ledger = Ledger.create(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    ledger.add_confirmation!
+    assert ledger.confirmed?
+  end
 end

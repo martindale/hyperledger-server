@@ -13,4 +13,12 @@ class Ledger < ActiveRecord::Base
     ledger.update_attribute :primary_account, acc
   end
   
+  def add_confirmation!
+    self.with_lock do
+      self.confirmation_count += 1
+      self.confirmed = true if self.confirmation_count >= ConsensusPool.quorum
+      self.save!
+    end
+  end
+  
 end

@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] ||= "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+ConsensusPool = OpenStruct.new(name: 'test', servers: [], quorum: 0)
 
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!

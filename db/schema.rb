@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140523041204) do
+ActiveRecord::Schema.define(version: 20140526101936) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,8 @@ ActiveRecord::Schema.define(version: 20140523041204) do
     t.integer  "balance"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "confirmation_count", default: 0
+    t.boolean  "confirmed",          default: false
   end
 
   add_index "accounts", ["code"], name: "index_accounts_on_code", unique: true, using: :btree
@@ -33,6 +35,8 @@ ActiveRecord::Schema.define(version: 20140523041204) do
     t.integer  "amount"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "confirmation_count", default: 0
+    t.boolean  "confirmed",          default: false
   end
 
   create_table "ledgers", force: true do |t|
@@ -42,6 +46,8 @@ ActiveRecord::Schema.define(version: 20140523041204) do
     t.integer  "primary_account_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "confirmation_count", default: 0
+    t.boolean  "confirmed",          default: false
   end
 
   add_index "ledgers", ["name"], name: "index_ledgers_on_name", unique: true, using: :btree
@@ -53,6 +59,8 @@ ActiveRecord::Schema.define(version: 20140523041204) do
     t.integer  "destination_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "confirmation_count", default: 0
+    t.boolean  "confirmed",          default: false
   end
 
 end
