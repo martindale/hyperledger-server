@@ -11,7 +11,7 @@ class LedgersController < ApplicationController
   end
 
   def create
-    if confirmation_params.any?
+    if confirmed?
       ledger = Ledger.find_or_create_by(ledger_params)
       ledger.add_confirmation
     else
@@ -27,7 +27,11 @@ private
   end
   
   def confirmation_params
-    params.permit(:confirmation_signature)
+    params.permit(:confirmation).permit(:server, :signature)
+  end
+  
+  def confirmed?
+    confirmation_params && ConsensusPool.instance.valid_confirmation?(confirmation_params, ledger_params)
   end
   
 end

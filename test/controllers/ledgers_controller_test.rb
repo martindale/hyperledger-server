@@ -25,19 +25,27 @@ class LedgersControllerTest < ActionController::TestCase
   end
   
   test "POST with confirmation should create resource" do
-    ConsensusPool = Minitest::Mock.new
-    ConsensusPool.expect :valid_confirmation?, true
     assert_difference 'Ledger.count', 1 do
-      post :create, ledger: @ledger_data, confirmation_signature: '123', format: :json
+      ConsensusPool.instance.stub :valid_confirmation?, true do
+        post :create, ledger: @ledger_data, confirmation: {server: 'one', signature: '123'}, format: :json
+      end
     end
   end
   
-  test "POST with confirmation should add a confirmation" do
-    ConsensusPool = Minitest::Mock.new
-    ConsensusPool.expect :valid_confirmation?, true
+  test "POST with valid confirmation should add a confirmation" do
     ledger = Ledger.create(@ledger_data)
-    post :create, ledger: @ledger_data, confirmation_signature: '123', format: :json
+    ConsensusPool.instance.stub :valid_confirmation?, true do
+      post :create, ledger: @ledger_data, confirmation: {server: 'one', signature: '123'}, format: :json
+    end
     assert_equal 1, ledger.reload.confirmation_count
+  end
+  
+  test "POST with invalid confirmation should not add a confirmation" do
+    ledger = Ledger.create(@ledger_data)
+    ConsensusPool.instance.stub :valid_confirmation?, false do
+      post :create, ledger: @ledger_data, confirmation: {server: 'one', signature: '123'}, format: :json
+    end
+    assert_equal 0, ledger.reload.confirmation_count
   end
   
 end

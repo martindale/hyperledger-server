@@ -10,6 +10,6 @@ class ConsensusPool
     @quorum = @servers.count - max_failures
   end
   
-  def valid_confirmation?(server, signature, data)
+  def valid_confirmation?(confirmation, data)
   end
 end
