@@ -6,6 +6,7 @@ class LedgersControllerTest < ActionController::TestCase
     key = OpenSSL::PKey::RSA.new 2048
     @public_key = key.public_key.to_pem
     @ledger_data = { public_key: @public_key, name: 'Moonbucks', url: 'moonbucks.com' }
+    stub_request(:post, /.*/)
   end
   
   test "valid POST should be successful" do
@@ -46,6 +47,25 @@ class LedgersControllerTest < ActionController::TestCase
       post :create, ledger: @ledger_data, confirmation: {server: 'one', signature: '123'}, format: :json
     end
     assert_equal 0, ledger.reload.confirmation_count
+  end
+  
+  test "POST which creates a resource should broadcast the message" do
+    key = OpenSSL::PKey::RSA.new(2048)
+    mock_server = { url: 'test', public_key: key.public_key.to_pem }
+    ConsensusPool.instance.stub :servers, [mock_server] do
+      post :create, ledger: @ledger_data, format: :json
+    end
+    assert_requested(:post, "#{mock_server[:url]}/ledgers")
+  end
+  
+  test "POST which confirms an existing resource should not broadcast" do
+    key = OpenSSL::PKey::RSA.new(2048)
+    mock_server = { url: 'test', public_key: key.public_key.to_pem }
+    Ledger.create(@ledger_data)
+    ConsensusPool.instance.stub :servers, [mock_server] do
+      post :create, ledger: @ledger_data, format: :json
+    end
+    assert_not_requested(:post, "#{mock_server[:url]}/ledgers")
   end
   
 end
