@@ -26,4 +26,13 @@ class ConsensusPoolTest < ActiveSupport::TestCase
     end
   end
   
+  test '#broadcast sends a post to all other servers' do
+    data = {test: 'test'}
+    stub_request(:post, "#{@mock_server[:url]}/ledgers")
+    ConsensusPool.instance.stub :servers, [@mock_server, @mock_server] do
+      ConsensusPool.instance.broadcast(:ledger, data)
+    end
+    assert_requested(:post, "#{@mock_server[:url]}/ledgers", times: 2)
+  end
+  
 end
