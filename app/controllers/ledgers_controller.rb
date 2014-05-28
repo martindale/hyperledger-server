@@ -27,11 +27,14 @@ private
   end
   
   def confirmation_params
-    params.permit(:confirmation).permit(:server, :signature)
+    params.fetch(:confirmation, {}).permit(:server, :signature)
   end
   
   def confirmed?
-    confirmation_params && ConsensusPool.instance.valid_confirmation?(confirmation_params, ledger_params)
+    return false if confirmation_params.empty?
+    server_id = confirmation_params[:server]
+    signature = confirmation_params[:signature]
+    ConsensusPool.instance.valid_confirmation?(server_id, signature, ledger_params)
   end
   
 end
