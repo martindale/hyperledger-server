@@ -13,17 +13,24 @@ class LedgerTest < ActiveSupport::TestCase
   end
   
   test "ledgers must not be confirmed if validation threshold not reached" do
-    ConsensusPool.quorum = 1
     pub_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
-    ledger = Ledger.create(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
-    refute ledger.confirmed?
+    ConsensusPool.instance.stub :quorum, 1 do
+      ledger = Ledger.create(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+      refute ledger.confirmed?
+    end
   end
   
   test "ledgers must be confirmed if validation threshold reached" do
-    ConsensusPool.quorum = 1
     pub_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
     ledger = Ledger.create(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
-    ledger.add_confirmation
-    assert ledger.confirmed?
+    ConsensusPool.instance.stub :quorum, 1 do
+      ledger.add_confirmation
+      assert ledger.confirmed?
+    end
   end
+  
+  # test "POST with a new record should be broadcast to pool" do
+  #   ConsensusPool.expect :broadcast, true
+  #   
+  # end
 end
