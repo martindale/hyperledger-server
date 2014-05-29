@@ -22,8 +22,9 @@ class ConsensusPool
     key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
     signature = (Base64.encode64 key.sign(OpenSSL::Digest::SHA256.new, data.to_json))
     confirmation = {server: ENV['SERVER_NAME'], signature: signature}
-    servers.each do |server|
-      RestClient.post "#{server[:url]}/#{resource.to_s.pluralize}",
+    broadcast_urls = servers.map { |s| s[:url] }.reject { |url| url == ENV['SERVER_NAME']}
+    broadcast_urls.each do |url|
+      RestClient.post "#{url}/#{resource.to_s.pluralize}",
                       {resource => data, confirmation: confirmation},
                       content_type: :json
     end
