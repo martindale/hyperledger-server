@@ -3,4 +3,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Mintet::Application.load_tasks
+Hyperledger::Application.load_tasks

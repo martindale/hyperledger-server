@@ -1,4 +1,4 @@
-Mintet::Application.routes.draw do
+Hyperledger::Application.routes.draw do
   resources :ledgers, only: [:show, :index, :create], param: :name
   resources :accounts,   only: [:show, :index, :create], param: :code
   resources :issues,     only: [:show, :create]

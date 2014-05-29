@@ -6,7 +6,7 @@
 development:
   adapter: postgresql
   encoding: unicode
-  database: mintet_development
+  database: hyperledger_development
   pool: 5
 
 # Warning: The database defined as "test" will be erased and
@@ -15,5 +15,5 @@ development:
 test:
   adapter: postgresql
   encoding: unicode
-  database: mintet_test
+  database: hyperledger_test
   pool: 5
