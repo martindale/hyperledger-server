@@ -45,6 +45,12 @@ class TransfersControllerTest < ActionController::TestCase
     assert_equal 0, @d.reload.balance
   end
   
+  test "valid POST should be forbidden if insufficient balance" do
+    @s.update_attribute :balance, 0
+    valid_post
+    assert_equal '422', response.code
+  end
+  
 private
   
   def valid_post

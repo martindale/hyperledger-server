@@ -1,6 +1,7 @@
 class Transfer < ActiveRecord::Base
   
   validates_presence_of :source, :destination, :amount
+  validate :sufficient_balance
   
   belongs_to :source, class_name: 'Account'
   belongs_to :destination, class_name: 'Account'
@@ -15,6 +16,14 @@ class Transfer < ActiveRecord::Base
       
       source.save!
       destination.save!
+    end
+  end
+  
+private
+  
+  def sufficient_balance
+    if amount > source.balance
+      errors.add :amount, 'is greater than the available balance'
     end
   end
   
