@@ -8,11 +8,6 @@ class Ledger < ActiveRecord::Base
   validates_uniqueness_of :name
   validates :public_key, rsa_public_key: true
   
-  after_create do |ledger|
-    acc = Account.create(public_key: ledger.public_key, ledger: ledger)
-    ledger.update_attribute :primary_account, acc
-  end
-  
   def add_confirmation
     self.with_lock do
       self.confirmation_count += 1
