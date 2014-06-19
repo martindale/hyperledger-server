@@ -5,8 +5,12 @@ class Issue < ActiveRecord::Base
   belongs_to :ledger
   
   before_create do |issue|
-    acc = issue.ledger.primary_account
-    acc.update_attribute :balance, (acc.balance + issue.amount)
+    account = issue.ledger.primary_account
+    transaction do
+      account.lock!
+      account.balance += issue.amount
+      account.save!
+    end
   end
   
 end
