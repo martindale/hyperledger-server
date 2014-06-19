@@ -3,16 +3,19 @@ require 'test_helper'
 class TransfersControllerTest < ActionController::TestCase
   
   setup do
-    @k1 = OpenSSL::PKey::RSA.new(2048)
-    @k2 = OpenSSL::PKey::RSA.new(2048)
-    @pk1 = @k1.public_key.to_pem
-    @pk2 = @k2.public_key.to_pem
+    @ledger_key = OpenSSL::PKey::RSA.new(2048)
+    @source_key = OpenSSL::PKey::RSA.new(2048)
+    @destination_key = OpenSSL::PKey::RSA.new(2048)
+    
     @digest = OpenSSL::Digest::SHA256.new
     
-    l = Ledger.create!(public_key: @pk1, name: 'Moonbucks', url: 'http://moonbucks.com')
-    Issue.create!(ledger: l, amount: 2000)
-    @s = l.primary_account
-    @d = Account.create!(public_key: @pk2, ledger: l)
+    l = Ledger.create!(public_key: @ledger_key.public_key.to_pem,
+                       name: 'Moonbucks', url: 'http://moonbucks.com')
+    @s = l.accounts.create!(public_key: @source_key.public_key.to_pem)
+    @d = l.accounts.create!(public_key: @destination_key.public_key.to_pem)
+    l.update_attribute :primary_account, @s
+    
+    l.issues.create!(amount: 2000)
   end
   
   test "valid POST should be successful" do
@@ -55,13 +58,13 @@ private
   
   def valid_post
     data = { source: @s.code, destination: @d.code, amount: 500 }
-    sig  = Base64.encode64 @k1.sign(@digest, data.to_json)
+    sig  = Base64.encode64 @source_key.sign(@digest, data.to_json)
     post :create, transfer: data, signature: sig, format: :json
   end
   
   def invalid_post
     data = { source: @s.code, destination: @d.code, amount: 500 }
-    sig  = Base64.encode64 @k2.sign(@digest, data.to_json)
+    sig  = Base64.encode64 @destination_key.sign(@digest, data.to_json)
     post :create, transfer: data, signature: sig, format: :json
   end
   

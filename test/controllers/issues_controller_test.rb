@@ -5,7 +5,9 @@ class IssuesControllerTest < ActionController::TestCase
   setup do
     @key = OpenSSL::PKey::RSA.new(2048)
     @public_key = @key.public_key.to_pem
-    Ledger.create!(public_key: @public_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    ledger = Ledger.create(public_key: @public_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    pa = ledger.accounts.create!(public_key: OpenSSL::PKey::RSA.new(2048).public_key.to_pem)
+    ledger.update_attribute :primary_account, pa
   end
   
   test "valid POST should be successful" do
