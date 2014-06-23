@@ -25,8 +25,9 @@ class ConsensusPool
     broadcast_urls = servers.map { |s| s[:url] }.reject { |url| url == ENV['SERVER_NAME']}
     broadcast_urls.each do |url|
       RestClient.post "#{url}/#{resource.to_s.pluralize}",
-                      {resource => data, confirmation: confirmation},
-                      content_type: :json
+                      data.merge({ confirmation: confirmation }),
+                      content_type: :json,
+                      accept: :json
     end
   end
   

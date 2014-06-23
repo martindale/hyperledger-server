@@ -5,7 +5,6 @@ require 'minitest/mock'
 require 'webmock/minitest'
 
 ENV['POOL_NAME'] = 'Test'
-ENV['POOL_CONFIG_PATH'] = (Rails.root + 'test/pool.yml').to_s
 ENV['SERVER_NAME'] = 'localtest'
 ENV['PRIVATE_KEY'] = OpenSSL::PKey::RSA.new(2048).to_pem
 

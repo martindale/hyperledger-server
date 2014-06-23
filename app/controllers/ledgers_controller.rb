@@ -13,19 +13,20 @@ class LedgersController < ApplicationController
   def create
     
     existing_ledger = Ledger.where(ledger_params).first
-    if confirmed?
-      ledger = Ledger.find_or_create_by(ledger_params)
-      ledger.add_confirmation
-    else
+    if confirmed? && existing_ledger
+      existing_ledger.add_confirmation
+      head :no_content
+    elsif !existing_ledger
       ledger = Ledger.create(ledger_params)
-      ledger.primary_account = ledger.accounts.create(primary_account_params)
+      ledger.primary_account = ledger.accounts.build(primary_account_params)
+      if ledger.valid?
+        ConsensusPool.instance.broadcast(:ledger, { ledger: ledger_params,
+                                                    primary_account: primary_account_params })
+      end
+      respond_with ledger
+    else
+      head :unprocessable_entity
     end
-    
-    if ledger.valid? && !existing_ledger
-      ConsensusPool.instance.broadcast(:ledger, ledger_params)
-    end
-    
-    respond_with ledger
     
   rescue ActionController::ParameterMissing
     head :unprocessable_entity
