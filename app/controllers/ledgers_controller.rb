@@ -18,17 +18,17 @@ class LedgersController < ApplicationController
       head :no_content
     elsif !existing_ledger
       ledger = Ledger.create(ledger_params)
-      ledger.primary_account = ledger.accounts.build(primary_account_params)
+      ledger.primary_account = ledger.accounts.create(primary_account_params)
       if ledger.valid?
         ConsensusPool.instance.broadcast(:ledger, { ledger: ledger_params,
                                                     primary_account: primary_account_params })
       end
       respond_with ledger
     else
-      head :unprocessable_entity
+      raise
     end
     
-  rescue ActionController::ParameterMissing
+  rescue
     head :unprocessable_entity
   end
   
