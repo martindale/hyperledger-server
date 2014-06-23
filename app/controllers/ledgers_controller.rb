@@ -11,17 +11,15 @@ class LedgersController < ApplicationController
   end
   
   def create
-    
     existing_ledger = Ledger.where(ledger_params).first
-    if confirmed? && existing_ledger
+    if confirmed?(combined_params) && existing_ledger
       existing_ledger.add_confirmation
       head :no_content
     elsif !existing_ledger
       ledger = Ledger.create(ledger_params)
       ledger.primary_account = ledger.accounts.create(primary_account_params)
       if ledger.valid?
-        ConsensusPool.instance.broadcast(:ledger, { ledger: ledger_params,
-                                                    primary_account: primary_account_params })
+        ConsensusPool.instance.broadcast(:ledger, combined_params)
       end
       respond_with ledger
     else
@@ -40,6 +38,10 @@ private
   
   def primary_account_params
     params.fetch(:primary_account).permit(:public_key)
+  end
+  
+  def combined_params
+    { ledger: ledger_params, primary_account: primary_account_params }
   end
   
 end
