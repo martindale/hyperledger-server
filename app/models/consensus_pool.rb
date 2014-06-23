@@ -5,7 +5,7 @@ class ConsensusPool
   
   def initialize
     @name = ENV['POOL_NAME']
-    @servers = YAML.load File.open ENV['POOL_CONFIG_PATH']
+    @servers = ConsensusNode.all
     max_failures = ((servers.count - 1) / 3.0).floor
     @quorum = @servers.count - max_failures
   end

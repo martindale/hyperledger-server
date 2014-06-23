@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140526101936) do
+ActiveRecord::Schema.define(version: 20140622145828) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,13 @@ ActiveRecord::Schema.define(version: 20140526101936) do
 
   add_index "accounts", ["code"], name: "index_accounts_on_code", unique: true, using: :btree
   add_index "accounts", ["public_key"], name: "index_accounts_on_public_key", unique: true, using: :btree
+
+  create_table "consensus_nodes", force: true do |t|
+    t.string   "url"
+    t.string   "public_key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "issues", force: true do |t|
     t.integer  "ledger_id"
