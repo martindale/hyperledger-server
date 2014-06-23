@@ -37,7 +37,7 @@ class LedgersControllerTest < ActionController::TestCase
   test "POST with confirmation should create resource" do
     assert_difference 'Ledger.count', 1 do
       ConsensusPool.instance.stub :valid_confirmation?, true do
-        post :create, ledger: @ledger_data, confirmation: {server: 'one', signature: '123'}, format: :json
+        post :create, ledger: @ledger_data, primary_account: @account_data, confirmation: {server: 'one', signature: '123'}, format: :json
       end
     end
   end
