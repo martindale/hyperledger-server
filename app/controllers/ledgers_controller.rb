@@ -18,8 +18,7 @@ class LedgersController < ApplicationController
       ledger.add_confirmation
     else
       ledger = Ledger.create(ledger_params)
-      primary_account = Account.new(primary_account_params)
-      primary_account.ledger = ledger
+      ledger.primary_account = ledger.accounts.create(primary_account_params)
     end
     
     if ledger.valid? && !existing_ledger
