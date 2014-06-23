@@ -19,7 +19,7 @@ class ConsensusPool
   end
   
   def broadcast(resource, data)
-    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
+    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'].gsub('\n',"\n"))
     signature = (Base64.encode64 key.sign(OpenSSL::Digest::SHA256.new, data.to_json))
     confirmation = {server: ENV['SERVER_NAME'], signature: signature}
     broadcast_urls = servers.map { |s| s[:url] }.reject { |url| url == ENV['SERVER_NAME']}
