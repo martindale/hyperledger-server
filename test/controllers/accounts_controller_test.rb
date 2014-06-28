@@ -10,12 +10,12 @@ class AccountsControllerTest < ActionController::TestCase
   end
   
   test "valid POST should be successful" do
-    post :create, public_key: @public_key, ledger: 'Moonbucks', format: :json
+    post :create, account: { public_key: @public_key, ledger: 'Moonbucks' }, format: :json
     assert_equal '201', response.code
   end
     
   test "POST with bad key should be unsuccessful" do
-    post :create, public_key: '456', ledger: 'Moonbucks', format: :json
+    post :create, account: { public_key: '456', ledger: 'Moonbucks' }, format: :json
     assert_equal '422', response.code
   end
     
