@@ -11,4 +11,7 @@ class Account < ActiveRecord::Base
     account.balance = 0
   end
   
+  def add_confirmation
+  end
+  
 end

@@ -13,4 +13,8 @@ class Issue < ActiveRecord::Base
     end
   end
   
+  def add_confirmation
+    
+  end
+  
 end

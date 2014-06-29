@@ -19,6 +19,10 @@ class Transfer < ActiveRecord::Base
     end
   end
   
+  def add_confirmation
+    
+  end
+  
 private
   
   def sufficient_balance

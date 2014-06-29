@@ -11,21 +11,20 @@ class LedgersController < ApplicationController
   end
   
   def create
-    existing_ledger = Ledger.where(ledger_params).first
-    if confirmed?(combined_params) && existing_ledger
-      existing_ledger.add_confirmation
-      head :no_content
-    elsif !existing_ledger
+    if confirmed?(combined_params)
+      ledger = Ledger.find_or_create_by(ledger_params)
+      ledger.primary_account = ledger.accounts.find_or_create_by(primary_account_params)
+    else
       ledger = Ledger.create(ledger_params)
       ledger.primary_account = ledger.accounts.create(primary_account_params)
-      if ledger.valid?
-        ConsensusPool.instance.broadcast(:ledger, combined_params)
-      end
-      respond_with ledger
-    else
-      raise
     end
     
+    if ledger.valid?
+      ConsensusPool.instance.broadcast(:ledger, combined_params)
+      ledger.add_confirmation
+    end
+    
+    respond_with ledger
   rescue
     head :unprocessable_entity
   end

@@ -11,25 +11,29 @@ class AccountsController < ApplicationController
   end
   
   def create
-    existing_account = Account.where(account_params).first
-    if confirmed?(combined_params) && existing_account
-      existing_account.add_confirmation
-      head :no_content
-    elsif !existing_account
-      ledger = Ledger.find_by_name(account_params[:ledger])
-      account = Account.create(public_key: account_params[:public_key], ledger: ledger)
-      ConsensusPool.instance.broadcast(:account, combined_params) if account.valid?
-      respond_with account
+    if confirmed?(combined_params)
+      account = Account.find_or_create_by(associated_account_params)
     else
-      raise
+      account = Account.create(associated_account_params)
     end
-  
+    
+    if account.valid?
+      ConsensusPool.instance.broadcast(:account, combined_params)
+      account.add_confirmation
+    end
+    
+    respond_with account
   end
   
 private
   
   def account_params
     params.require(:account).permit(:public_key, :ledger)
+  end
+  
+  def associated_account_params
+    ledger = Ledger.find_by_name(account_params[:ledger])
+    { public_key: account_params[:public_key], ledger: ledger }
   end
   
   def combined_params
