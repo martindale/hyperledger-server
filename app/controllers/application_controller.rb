@@ -5,15 +5,15 @@ class ApplicationController < ActionController::Base
   
 private
   
-  def confirmation_params
-    params.fetch(:confirmation, {}).permit(:server, :signature)
+  def authentication_params
+    params.fetch(:authentication, {}).permit(:node, :signature)
   end
   
   def confirmed?(data)
-    return false if confirmation_params.empty?
-    server_id = confirmation_params[:server]
-    signature = confirmation_params[:signature]
-    ConsensusPool.instance.valid_confirmation?(server_id, signature, data)
+    return false if authentication_params.empty?
+    node = authentication_params[:node]
+    signature = authentication_params[:signature]
+    ConsensusPool.instance.valid_confirmation?(node, signature, data)
   end
   
 end

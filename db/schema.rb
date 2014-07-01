@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140623025232) do
+ActiveRecord::Schema.define(version: 20140629103358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,6 +59,17 @@ ActiveRecord::Schema.define(version: 20140623025232) do
 
   add_index "ledgers", ["name"], name: "index_ledgers_on_name", unique: true, using: :btree
   add_index "ledgers", ["public_key"], name: "index_ledgers_on_public_key", unique: true, using: :btree
+
+  create_table "prepare_confirmations", force: true do |t|
+    t.string   "node"
+    t.text     "signature"
+    t.integer  "confirmable_id"
+    t.string   "confirmable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "prepare_confirmations", ["confirmable_id", "confirmable_type"], name: "index_prepare_polymorphic_reference", using: :btree
 
   create_table "transfers", force: true do |t|
     t.integer  "amount"
