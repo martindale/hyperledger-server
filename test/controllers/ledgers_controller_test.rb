@@ -78,10 +78,18 @@ class LedgersControllerTest < ActionController::TestCase
   
   test "POST with invalid signature should not add a prepare record" do
     ledger = Ledger.create!(@ledger_data)
-    assert_no_difference 'ledger.prepare_confirmations.count', 0 do
+    assert_no_difference 'ledger.prepare_confirmations.count' do
       post :create, ledger: @ledger_data,
                     primary_account: @account_data,
                     authentication: { node: 'test', signature: '123' }
+    end
+  end
+  
+  # Commit records
+  test "POST with commit should add a commit record" do
+    ledger = Ledger.create!(@ledger_data)
+    assert_difference 'ledger.commit_confirmations.count', 1 do
+      post :create, valid_commit_post
     end
   end
   
@@ -90,6 +98,13 @@ private
   def valid_prepare_post
     digest = OpenSSL::Digest::SHA256.new
     data = { ledger: @ledger_data, primary_account: @account_data }
+    signature = Base64.encode64 @node_key.sign(digest, data.to_json)
+    data.merge({ authentication: { node: 'test', signature: signature } })
+  end
+  
+  def valid_commit_post
+    digest = OpenSSL::Digest::SHA256.new
+    data = { ledger: @ledger_data, primary_account: @account_data, commit: true }
     signature = Base64.encode64 @node_key.sign(digest, data.to_json)
     data.merge({ authentication: { node: 'test', signature: signature } })
   end

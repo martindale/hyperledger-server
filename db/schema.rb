@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140629103358) do
+ActiveRecord::Schema.define(version: 20140701040815) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,17 @@ ActiveRecord::Schema.define(version: 20140629103358) do
 
   add_index "accounts", ["code"], name: "index_accounts_on_code", unique: true, using: :btree
   add_index "accounts", ["public_key"], name: "index_accounts_on_public_key", unique: true, using: :btree
+
+  create_table "commit_confirmations", force: true do |t|
+    t.string   "node"
+    t.text     "signature"
+    t.integer  "confirmable_id"
+    t.string   "confirmable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "commit_confirmations", ["confirmable_id", "confirmable_type"], name: "index_commit_polymorphic_reference", using: :btree
 
   create_table "consensus_nodes", force: true do |t|
     t.string   "url"

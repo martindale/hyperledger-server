@@ -11,7 +11,7 @@ class LedgersController < ApplicationController
   end
   
   def create
-    if confirmed?(combined_params)
+    if confirmed?(combined_params) || confirmed?(combined_commit_params)
       ledger = Ledger.find_or_create_by(ledger_params)
       ledger.primary_account = ledger.accounts.find_or_create_by(primary_account_params)
     else
@@ -21,7 +21,9 @@ class LedgersController < ApplicationController
     
     if ledger.valid?
       ConsensusPool.instance.broadcast(:ledger, combined_params)
-      if authentication_params.present?
+      if authentication_params.present? && params[:commit]
+        ledger.commit_confirmations.create(authentication_params)
+      elsif authentication_params.present?
         ledger.prepare_confirmations.create(authentication_params)
       else
         ledger.prepare_confirmations.create(prepare_params)
@@ -47,9 +49,13 @@ private
     { ledger: ledger_params, primary_account: primary_account_params }
   end
   
+  def combined_commit_params
+    combined_params.merge({ commit: true })
+  end
+  
   def prepare_params
-    digest = OpenSSL::Digest::SHA256.new
     key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
+    digest = OpenSSL::Digest::SHA256.new
     signature = Base64.encode64 key.sign(digest, combined_params.to_json)
     { node: ENV['SERVER_NAME'], signature: signature }
   end
