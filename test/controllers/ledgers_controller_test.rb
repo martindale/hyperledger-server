@@ -57,8 +57,14 @@ class LedgersControllerTest < ActionController::TestCase
   end
   
   # Prepare records
+  test "valid POST should add prepare record for self" do
+    assert_difference 'PrepareConfirmation.count', 1 do
+      post :create, ledger: @ledger_data, primary_account: @account_data
+    end
+  end
+  
   test "valid POST with signature for new resource should add prepare record" do
-    assert_difference 'Ledger.first.prepare_confirmations.count', 1 do
+    assert_difference 'PrepareConfirmation.count', 1 do
       post :create, valid_prepare_post
     end
   end

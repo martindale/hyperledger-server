@@ -21,7 +21,11 @@ class LedgersController < ApplicationController
     
     if ledger.valid?
       ConsensusPool.instance.broadcast(:ledger, combined_params)
-      ledger.prepare_confirmations.create(authentication_params)
+      if authentication_params.present?
+        ledger.prepare_confirmations.create(authentication_params)
+      else
+        ledger.prepare_confirmations.create(prepare_params)
+      end
     end
     
     respond_with ledger
@@ -41,6 +45,13 @@ private
   
   def combined_params
     { ledger: ledger_params, primary_account: primary_account_params }
+  end
+  
+  def prepare_params
+    digest = OpenSSL::Digest::SHA256.new
+    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
+    signature = Base64.encode64 key.sign(digest, combined_params.to_json)
+    { node: ENV['SERVER_NAME'], signature: signature }
   end
   
 end
