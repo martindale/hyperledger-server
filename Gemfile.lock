@@ -32,8 +32,13 @@ GEM
     addressable (2.3.6)
     arel (5.0.1.20140414130214)
     builder (3.2.2)
+    byebug (3.1.2)
+      columnize (~> 0.8)
+      debugger-linecache (~> 1.2)
+    columnize (0.8.9)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
+    debugger-linecache (1.2.0)
     dotenv (0.11.1)
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
@@ -111,6 +116,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers (~> 0.8)
+  byebug
   dotenv-rails
   pg
   rails (= 4.1.1)
