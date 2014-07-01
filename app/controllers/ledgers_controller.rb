@@ -22,11 +22,11 @@ class LedgersController < ApplicationController
     if ledger.valid?
       ConsensusPool.instance.broadcast(:ledger, combined_params)
       if authentication_params.present? && params[:commit]
-        ledger.commit_confirmations.create(authentication_params)
+        ledger.add_commit(authentication_params)
       elsif authentication_params.present?
-        ledger.prepare_confirmations.create(authentication_params)
+        ledger.add_prepare(authentication_params)
       else
-        ledger.prepare_confirmations.create(prepare_params)
+        ledger.add_prepare(prepare_params)
       end
     end
     
