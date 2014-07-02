@@ -1,4 +1,5 @@
 class Issue < ActiveRecord::Base
+  include Confirmable
   
   validates_presence_of :ledger, :amount
   
@@ -11,10 +12,6 @@ class Issue < ActiveRecord::Base
       account.balance += issue.amount
       account.save!
     end
-  end
-  
-  def add_confirmation
-    
   end
   
 end

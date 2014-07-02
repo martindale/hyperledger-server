@@ -1,4 +1,5 @@
 class Transfer < ActiveRecord::Base
+  include Confirmable
   
   validates_presence_of :source, :destination, :amount
   validate :sufficient_balance
@@ -17,10 +18,6 @@ class Transfer < ActiveRecord::Base
       source.save!
       destination.save!
     end
-  end
-  
-  def add_confirmation
-    
   end
   
 private
