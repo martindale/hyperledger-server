@@ -1,4 +1,5 @@
 class Ledger < ActiveRecord::Base
+  include Confirmable
   
   has_many    :accounts
   belongs_to  :primary_account, class_name: 'Account'
@@ -10,15 +11,4 @@ class Ledger < ActiveRecord::Base
   validates_uniqueness_of :name
   validates :public_key, rsa_public_key: true
   
-  def add_prepare(prepare_params)
-    quorum = ConsensusPool.instance.quorum
-    self.prepare_confirmations.create(prepare_params)
-    self.prepared = true if prepare_confirmations.count >= quorum
-  end
-  
-  def add_commit(commit_params)
-    quorum = ConsensusPool.instance.quorum
-    self.commit_confirmations.create(commit_params)
-    self.committed = true if commit_confirmations.count >= quorum
-  end
 end
