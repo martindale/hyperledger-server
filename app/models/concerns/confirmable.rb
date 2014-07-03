@@ -1,6 +1,11 @@
 module Confirmable
   extend ActiveSupport::Concern
   
+  included do
+    has_many    :prepare_confirmations, as: :confirmable
+    has_many    :commit_confirmations, as: :confirmable
+  end
+  
   def add_prepare(prepare_params)
     quorum = ConsensusPool.instance.quorum
     self.prepare_confirmations.create(prepare_params)
