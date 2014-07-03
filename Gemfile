@@ -3,7 +3,7 @@ ruby '2.1.2'
 
 gem 'dotenv-rails', groups: [:development, :test]
 
-gem 'rails', '4.1.1'
+gem 'rails', '4.1.4'
 gem 'pg'
 gem 'active_model_serializers', '~> 0.8'
 gem 'rest_client'
