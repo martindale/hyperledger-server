@@ -9,4 +9,8 @@ class Ledger < ActiveRecord::Base
   validates_uniqueness_of :name
   validates :public_key, rsa_public_key: true
   
+  after_create do |ledger|
+    params = LedgerSerializer.new(ledger).as_json
+    ConsensusPool.instance.broadcast(:ledger, params)
+  end
 end

@@ -4,18 +4,29 @@ module Confirmable
   included do
     has_many    :prepare_confirmations, as: :confirmable
     has_many    :commit_confirmations, as: :confirmable
+    
+    after_create do |confirmable|
+      ConsensusNode.all.each do |node|
+        confirmable.prepare_confirmations.create(node: node.url)
+        confirmable.commit_confirmations.create(node: node.url)
+      end
+    end
   end
   
-  def add_prepare(prepare_params)
+  def add_prepare(node, signature)
     quorum = ConsensusPool.instance.quorum
-    self.prepare_confirmations.create(prepare_params)
-    self.prepared = true if prepare_confirmations.count >= quorum
+    prepare = self.prepare_confirmations.find_by_node(node)
+    prepare.signature = signature
+    prepare.save
+    self.prepared = true if prepare_confirmations.signed.count >= quorum
   end
   
-  def add_commit(commit_params)
+  def add_commit(node, signature)
     quorum = ConsensusPool.instance.quorum
-    self.commit_confirmations.create(commit_params)
-    self.committed = true if commit_confirmations.count >= quorum
+    commit = self.commit_confirmations.find_by_node(node)
+    commit.signature = signature
+    commit.save
+    self.committed = true if commit_confirmations.signed.count >= quorum
   end
   
 end
