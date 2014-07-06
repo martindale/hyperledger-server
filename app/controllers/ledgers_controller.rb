@@ -11,28 +11,30 @@ class LedgersController < ApplicationController
   end
   
   def create
-    if confirmed?(combined_params) || confirmed?(combined_commit_params)
-      ledger = Ledger.find_or_create_by(ledger_params)
-      ledger.primary_account = ledger.accounts.find_or_create_by(primary_account_params)
-    else
-      ledger = Ledger.create(ledger_params)
-      ledger.primary_account = ledger.accounts.create(primary_account_params) if ledger.valid?
-    end
+    ledger = Ledger.new(ledger_params)
     
-    if ledger.valid?
-      ConsensusPool.instance.broadcast(:ledger, combined_params)
-      if authentication_params.present? && params[:commit]
-        ledger.add_commit(authentication_params)
-      elsif authentication_params.present?
-        ledger.add_prepare(authentication_params)
-      else
-        ledger.add_prepare(prepare_params)
-      end
+    if ledger.save
+      ledger.primary_account = ledger.accounts.create(primary_account_params)
+      ledger.add_prepare(prepare_params[:node], prepare_params[:signature])
     end
     
     respond_with ledger
   rescue ActionController::ParameterMissing
     head :unprocessable_entity
+  end
+  
+  def prepare
+    ledger = Ledger.find_or_create_by(ledger_params)
+    ledger.primary_account = ledger.accounts.find_or_create_by(primary_account_params)
+    ledger.add_prepare(authentication_params[:node], authentication_params[:signature])
+    respond_with ledger
+  end
+  
+  def commit
+    ledger = Ledger.find_or_create_by(ledger_params)
+    ledger.primary_account = ledger.accounts.find_or_create_by(primary_account_params)
+    ledger.add_commit(authentication_params[:node], authentication_params[:signature])
+    respond_with ledger
   end
   
 private

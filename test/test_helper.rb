@@ -4,9 +4,12 @@ require 'rails/test_help'
 require 'minitest/mock'
 require 'webmock/minitest'
 
-ENV['POOL_NAME'] = 'Test'
+# Setup this node in consensus pool
+ENV['POOL_NAME'] = 'test'
 ENV['SERVER_NAME'] = 'localtest'
-ENV['PRIVATE_KEY'] = OpenSSL::PKey::RSA.new(2048).to_pem
+key = OpenSSL::PKey::RSA.new(2048)
+ENV['PRIVATE_KEY'] = key.to_pem
+ConsensusNode.create!(url: ENV['SERVER_NAME'], public_key: key.public_key.to_pem)
 
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!

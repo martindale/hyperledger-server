@@ -11,7 +11,7 @@ class LedgersControllerTest < ActionController::TestCase
     @ledger_data = { public_key: @public_key, name: 'Moonbucks', url: 'moonbucks.com' }
     @account_data = { public_key: account_key.public_key.to_pem }
     
-    @node = ConsensusNode.create!(url: 'test', public_key: @node_key.public_key.to_pem)
+    @node = ConsensusNode.create!(url: 'localtest-2', public_key: @node_key.public_key.to_pem)
     
     stub_request(:post, /.*/)
     request.accept = 'application/json'
@@ -41,55 +41,49 @@ class LedgersControllerTest < ActionController::TestCase
   # Prepare messages
   test "valid POST with signature should create resource" do
     assert_difference 'Ledger.count', 1 do
-      post :create, valid_prepare_post
+      post :prepare, valid_prepare_post
     end
   end
   
   test "valid POST which creates a resource should broadcast to the other nodes" do
-    post :create, valid_prepare_post
-    assert_requested(:post, 'test/ledgers')
+    post :prepare, valid_prepare_post
+    assert_requested(:post, 'localtest-2/ledgers')
   end
   
-  test "valid POST which confirms an existing resource should not broadcast" do
+  test "valid POST which confirms an existing resource should not re-broadcast" do
     Ledger.create!(@ledger_data)
-    post :create, valid_prepare_post
-    assert_not_requested(:post, 'test/ledgers')
+    post :prepare, valid_prepare_post
+    assert_requested(:post, 'localtest-2/ledgers', times: 1)
   end
   
   # Prepare records
-  test "valid POST should add prepare record for self" do
-    assert_difference 'PrepareConfirmation.count', 1 do
+  test "valid POST should sign prepare record for self" do
+    assert_difference 'PrepareConfirmation.signed.count', 1 do
       post :create, ledger: @ledger_data, primary_account: @account_data
     end
   end
   
-  test "valid POST with signature for new resource should add prepare record" do
-    assert_difference 'PrepareConfirmation.count', 1 do
-      post :create, valid_prepare_post
+  test "valid POST which confirms an existing resource should sign a prepare record" do
+    ledger = Ledger.create!(@ledger_data)
+    assert_difference 'ledger.prepare_confirmations.signed.count', 1 do
+      post :prepare, valid_prepare_post
     end
   end
   
-  test "valid POST which confirms an existing resource should create a prepare record" do
+  test "POST with invalid signature should not sign a prepare record" do
     ledger = Ledger.create!(@ledger_data)
-    assert_difference 'ledger.prepare_confirmations.count', 1 do
-      post :create, valid_prepare_post
-    end
-  end
-  
-  test "POST with invalid signature should not add a prepare record" do
-    ledger = Ledger.create!(@ledger_data)
-    assert_no_difference 'ledger.prepare_confirmations.count' do
-      post :create, ledger: @ledger_data,
-                    primary_account: @account_data,
-                    authentication: { node: 'test', signature: '123' }
+    assert_no_difference 'ledger.prepare_confirmations.signed.count' do
+      post :prepare, ledger: @ledger_data,
+                     primary_account: @account_data,
+                     authentication: { node: 'test', signature: '123' }
     end
   end
   
   # Commit records
-  test "POST with commit should add a commit record" do
+  test "POST with commit should sign a commit record" do
     ledger = Ledger.create!(@ledger_data)
-    assert_difference 'ledger.commit_confirmations.count', 1 do
-      post :create, valid_commit_post
+    assert_difference 'ledger.commit_confirmations.signed.count', 1 do
+      post :commit, valid_commit_post
     end
   end
   
@@ -99,14 +93,14 @@ private
     digest = OpenSSL::Digest::SHA256.new
     data = { ledger: @ledger_data, primary_account: @account_data }
     signature = Base64.encode64 @node_key.sign(digest, data.to_json)
-    data.merge({ authentication: { node: 'test', signature: signature } })
+    data.merge({ authentication: { node: 'localtest-2', signature: signature } })
   end
   
   def valid_commit_post
     digest = OpenSSL::Digest::SHA256.new
     data = { ledger: @ledger_data, primary_account: @account_data, commit: true }
     signature = Base64.encode64 @node_key.sign(digest, data.to_json)
-    data.merge({ authentication: { node: 'test', signature: signature } })
+    data.merge({ authentication: { node: 'localtest-2', signature: signature } })
   end
   
 end

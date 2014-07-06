@@ -1,6 +1,15 @@
 Hyperledger::Application.routes.draw do
-  resources :ledgers, only: [:show, :index, :create], param: :name
-  resources :accounts,   only: [:show, :index, :create], param: :code
-  resources :issues,     only: [:show, :create]
-  resources :transfers,  only: [:show, :create]
+  
+  concern :confirmable do
+    collection do
+      post :prepare
+      post :commit
+    end
+  end
+  
+  resources :ledgers,   only: [:show, :index, :create], param: :name, concerns: :confirmable
+  resources :accounts,  only: [:show, :index, :create], param: :code
+  resources :issues,    only: [:show, :create]
+  resources :transfers, only: [:show, :create]
+  
 end
