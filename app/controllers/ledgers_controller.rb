@@ -19,8 +19,6 @@ class LedgersController < ApplicationController
     end
     
     respond_with ledger
-  rescue ActionController::ParameterMissing
-    head :unprocessable_entity
   end
   
   def prepare
