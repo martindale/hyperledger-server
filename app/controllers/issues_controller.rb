@@ -11,11 +11,6 @@ class IssuesController < ApplicationController
       issue = Issue.create(associated_issue_params)
     end
     
-    if issue.valid?
-      ConsensusPool.instance.broadcast(:issue, combined_params)
-      issue.add_confirmation
-    end
-    
     respond_with issue
   rescue
     head :unprocessable_entity

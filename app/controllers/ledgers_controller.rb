@@ -59,7 +59,7 @@ private
     key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
     digest = OpenSSL::Digest::SHA256.new
     signature = Base64.encode64 key.sign(digest, combined_params.to_json)
-    { node: ENV['SERVER_NAME'], signature: signature }
+    { node: ENV['NODE_URL'], signature: signature }
   end
   
 end

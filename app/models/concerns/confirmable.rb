@@ -14,22 +14,20 @@ module Confirmable
   end
   
   def add_prepare(node, signature)
-    quorum = ConsensusPool.instance.quorum
     prepare = self.prepare_confirmations.find_by_node(node)
     if prepare
       prepare.signature = signature
       prepare.save
-      self.prepared = true if prepare_confirmations.signed.count >= quorum
+      self.prepared = true if prepare_confirmations.signed.count >= ConsensusNode.quorum
     end
   end
   
   def add_commit(node, signature)
-    quorum = ConsensusPool.instance.quorum
     commit = self.commit_confirmations.find_by_node(node)
     if commit
       commit.signature = signature
       commit.save
-      self.committed = true if commit_confirmations.signed.count >= quorum
+      self.committed = true if commit_confirmations.signed.count >= ConsensusNode.quorum
     end
   end
   

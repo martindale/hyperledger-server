@@ -11,9 +11,8 @@ private
   
   def confirmed?(data)
     return false if authentication_params.empty?
-    node = authentication_params[:node]
-    signature = authentication_params[:signature]
-    ConsensusPool.instance.valid_confirmation?(node, signature, data)
+    node = ConsensusNode.find_by_url(authentication_params[:node])
+    node.valid_confirmation?(node, authentication_params[:signature], data)
   end
   
 end

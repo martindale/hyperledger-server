@@ -7,6 +7,7 @@ class AccountsControllerTest < ActionController::TestCase
     Ledger.create!(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
     key = OpenSSL::PKey::RSA.new(2048)
     @public_key = key.public_key.to_pem
+    stub_request(:post, /.*/)
   end
   
   test "valid POST should be successful" do

@@ -11,11 +11,6 @@ class TransfersController < ApplicationController
       transfer = Transfer.create(associated_transfer_params)
     end
     
-    if transfer.valid?
-      ConsensusPool.instance.broadcast(:transfer, combined_params)
-      transfer.add_confirmation
-    end
-    
     respond_with transfer
   rescue
     head :unprocessable_entity

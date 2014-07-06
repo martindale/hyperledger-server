@@ -16,6 +16,7 @@ class TransfersControllerTest < ActionController::TestCase
     l.update_attribute :primary_account, @s
     
     l.issues.create!(amount: 2000)
+    stub_request(:post, /.*/)
   end
   
   test "valid POST should be successful" do

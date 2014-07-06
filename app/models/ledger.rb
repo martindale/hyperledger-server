@@ -11,6 +11,6 @@ class Ledger < ActiveRecord::Base
   
   after_create do |ledger|
     params = LedgerSerializer.new(ledger).as_json
-    ConsensusPool.instance.broadcast(:ledger, params)
+    ConsensusNode.broadcast(:ledger, params)
   end
 end

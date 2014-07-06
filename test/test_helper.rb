@@ -5,11 +5,10 @@ require 'minitest/mock'
 require 'webmock/minitest'
 
 # Setup this node in consensus pool
-ENV['POOL_NAME'] = 'test'
-ENV['SERVER_NAME'] = 'localtest'
-key = OpenSSL::PKey::RSA.new(2048)
+ENV['NODE_URL'] = 'localtest'
+key ||= OpenSSL::PKey::RSA.new(2048)
 ENV['PRIVATE_KEY'] = key.to_pem
-ConsensusNode.create!(url: ENV['SERVER_NAME'], public_key: key.public_key.to_pem)
+ConsensusNode.create(url: ENV['NODE_URL'], public_key: key.public_key.to_pem)
 
 class ActiveSupport::TestCase
   ActiveRecord::Migration.check_pending!
@@ -21,5 +20,4 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
-  
 end

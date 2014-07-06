@@ -17,11 +17,6 @@ class AccountsController < ApplicationController
       account = Account.create(associated_account_params)
     end
     
-    if account.valid?
-      ConsensusPool.instance.broadcast(:account, combined_params)
-      account.add_confirmation
-    end
-    
     respond_with account
   end
   
