@@ -20,6 +20,8 @@ class Transfer < ActiveRecord::Base
     end
   end
   
+private
+  
   def valid_signature
     unless source.valid_sig?(client_signature, signable_string)
       errors.add :client_signature, 'is not valid'
@@ -40,6 +42,11 @@ class Transfer < ActiveRecord::Base
     if amount > source.balance
       errors.add :amount, 'is greater than the available balance'
     end
+  end
+  
+  def broadcast_params
+    {transfer: {source: source.code, destination: destination.code,
+                amount: amount, client_signature: client_signature}}
   end
   
 end

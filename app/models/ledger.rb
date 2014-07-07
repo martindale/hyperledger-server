@@ -10,9 +10,7 @@ class Ledger < ActiveRecord::Base
   validates_uniqueness_of :name
   validates :public_key, rsa_public_key: true
   
-  after_create do |ledger|
-    ConsensusNode.broadcast_prepare(:ledger, broadcast_params)
-  end
+private
   
   def broadcast_params
     { ledger: attributes.slice(:public_key, :name, :url),

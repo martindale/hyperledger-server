@@ -2,13 +2,14 @@ module Confirmable
   extend ActiveSupport::Concern
   
   included do
-    has_many    :prepare_confirmations, as: :confirmable
-    has_many    :commit_confirmations, as: :confirmable
+    has_many :prepare_confirmations, as: :confirmable
+    has_many :commit_confirmations, as: :confirmable
     
-    after_create do |confirmable|
+    after_create do
+      ConsensusNode.broadcast_prepare(self.class.name.downcase.to_sym, broadcast_params)
       ConsensusNode.all.each do |node|
-        confirmable.prepare_confirmations.create(node: node.url)
-        confirmable.commit_confirmations.create(node: node.url)
+        prepare_confirmations.create(node: node.url)
+        commit_confirmations.create(node: node.url)
       end
     end
   end

@@ -13,4 +13,10 @@ class Account < ActiveRecord::Base
     account.balance = 0
   end
   
+private
+  
+  def broadcast_params
+    {account: {ledger: ledger.name, public_key: public_key}}
+  end
+  
 end

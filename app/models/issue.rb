@@ -27,4 +27,8 @@ private
     {ledger: ledger.name, amount: amount}.to_json
   end
   
+  def broadcast_params
+    {issue: {ledger: ledger.name, amount: amount}}
+  end
+  
 end
