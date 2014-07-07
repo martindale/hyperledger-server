@@ -13,7 +13,7 @@ class Ledger < ActiveRecord::Base
 private
   
   def broadcast_params
-    { ledger: attributes.slice(:public_key, :name, :url),
+    { ledger: attributes.slice('public_key', 'name', 'url'),
       primary_account: { public_key: primary_account.public_key }}
   end
   
