@@ -11,13 +11,20 @@ class AccountsController < ApplicationController
   end
   
   def create
-    if confirmed?(combined_params)
-      account = Account.find_or_create_by(associated_account_params)
-    else
-      account = Account.create(associated_account_params)
-    end
-    
+    account = Account.create(associated_account_params)
     respond_with account
+  end
+  
+  def prepare
+    account = Issue.find_or_create_by(associated_account_params)
+    account.add_prepare(authentication_params[:node], authentication_params[:signature])
+    respond_with account
+  end
+  
+  def commit
+    account = Issue.find_or_create_by(associated_account_params)
+    account.add_commit(authentication_params[:node], authentication_params[:signature])
+    respond_with issaccountue
   end
   
 private

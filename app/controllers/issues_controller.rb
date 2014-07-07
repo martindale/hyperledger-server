@@ -7,6 +7,18 @@ class IssuesController < ApplicationController
     respond_with issue
   end
   
+  def prepare
+    issue = Issue.find_or_create_by(associated_issue_params)
+    issue.add_prepare(authentication_params[:node], authentication_params[:signature])
+    respond_with issue
+  end
+  
+  def commit
+    issue = Issue.find_or_create_by(associated_issue_params)
+    issue.add_commit(authentication_params[:node], authentication_params[:signature])
+    respond_with issue
+  end
+  
 private
   
   def issue_params
