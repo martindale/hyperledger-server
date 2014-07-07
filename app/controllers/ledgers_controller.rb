@@ -12,9 +12,9 @@ class LedgersController < ApplicationController
   
   def create
     ledger = Ledger.new(ledger_params)
+    ledger.primary_account = ledger.accounts.build(primary_account_params)
     
     if ledger.save
-      ledger.primary_account = ledger.accounts.create(primary_account_params)
       ledger.add_prepare(prepare_params[:node], prepare_params[:signature])
     end
     
@@ -22,16 +22,20 @@ class LedgersController < ApplicationController
   end
   
   def prepare
-    ledger = Ledger.find_or_create_by(ledger_params)
-    ledger.primary_account = ledger.accounts.find_or_create_by(primary_account_params)
-    ledger.add_prepare(authentication_params[:node], authentication_params[:signature])
+    ledger = Ledger.find_or_initialize_by(ledger_params)
+    ledger.primary_account = ledger.accounts.find_or_initialize_by(primary_account_params)
+    if ledger.save
+      ledger.add_prepare(authentication_params[:node], authentication_params[:signature])
+    end
     respond_with ledger
   end
   
   def commit
-    ledger = Ledger.find_or_create_by(ledger_params)
-    ledger.primary_account = ledger.accounts.find_or_create_by(primary_account_params)
-    ledger.add_commit(authentication_params[:node], authentication_params[:signature])
+    ledger = Ledger.find_or_initialize_by(ledger_params)
+    ledger.primary_account = ledger.accounts.find_or_initialize_by(primary_account_params)
+    if ledger.save
+      ledger.add_commit(authentication_params[:node], authentication_params[:signature])
+    end
     respond_with ledger
   end
   

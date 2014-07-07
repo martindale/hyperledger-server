@@ -7,8 +7,8 @@ class LedgerTest < ActiveSupport::TestCase
     ConsensusNode.create!(url: 'localtest-2', public_key: node_key.public_key.to_pem)
     stub_request(:post, /.*/)
     
-    pub_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
-    @ledger = Ledger.create!(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    ledger_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
+    @ledger = create_basic_ledger('Moonbucks', ledger_key)
   end
   
   test "ledgers must validate incorrect RSA public keys" do

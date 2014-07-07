@@ -3,8 +3,9 @@ require 'test_helper'
 class AccountsControllerTest < ActionController::TestCase
   
   setup do
-    pub_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
-    Ledger.create!(public_key: pub_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    ledger_key = OpenSSL::PKey::RSA.new(2048).public_key.to_pem
+    create_basic_ledger('Moonbucks', ledger_key)
+    
     key = OpenSSL::PKey::RSA.new(2048)
     @public_key = key.public_key.to_pem
     stub_request(:post, /.*/)

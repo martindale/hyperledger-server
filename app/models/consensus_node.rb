@@ -9,19 +9,32 @@ class ConsensusNode < ActiveRecord::Base
     count - max_failures
   end
   
-  def self.broadcast(resource, data)
-    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'].gsub('\n',"\n"))
-    signature = (Base64.encode64 key.sign(OpenSSL::Digest::SHA256.new, data.to_json))
-    auth = {node: ENV['NODE_URL'], signature: signature}
+  def self.broadcast_prepare(resource, data)
     broadcast_urls.each do |url|
-      RestClient.post "#{url}/#{resource.to_s.pluralize}",
-                      data.merge({ authentication: auth }),
+      RestClient.post "#{url}/#{resource.to_s.pluralize}/prepare",
+                      data.merge({ authentication: auth_params(data) }),
+                      content_type: :json,
+                      accept: :json
+    end
+  end
+  
+  def self.broadcast_commit(resource, data)
+    data.merge!(commit: true)
+    broadcast_urls.each do |url|
+      RestClient.post "#{url}/#{resource.to_s.pluralize}/commit",
+                      data.merge({ authentication: auth_params(data) }),
                       content_type: :json,
                       accept: :json
     end
   end
   
 private
+  
+  def self.auth_params(data)
+    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'].gsub('\n',"\n"))
+    signature = (Base64.encode64 key.sign(OpenSSL::Digest::SHA256.new, data.to_json))
+    {node: ENV['NODE_URL'], signature: signature}
+  end
   
   def self.broadcast_urls
     where('url != ?', ENV['NODE_URL']).map(&:url)

@@ -5,9 +5,9 @@ class IssuesControllerTest < ActionController::TestCase
   setup do
     @key = OpenSSL::PKey::RSA.new(2048)
     @public_key = @key.public_key.to_pem
-    ledger = Ledger.create(public_key: @public_key, name: 'Moonbucks', url: 'http://moonbucks.com')
-    pa = ledger.accounts.create!(public_key: OpenSSL::PKey::RSA.new(2048).public_key.to_pem)
-    ledger.update_attribute :primary_account, pa
+    ledger = Ledger.new(public_key: @public_key, name: 'Moonbucks', url: 'http://moonbucks.com')
+    ledger.primary_account = ledger.accounts.new(public_key: OpenSSL::PKey::RSA.new(2048).public_key.to_pem)
+    ledger.save!
     stub_request(:post, /.*/)
   end
   

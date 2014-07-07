@@ -9,8 +9,7 @@ class TransfersControllerTest < ActionController::TestCase
     
     @digest = OpenSSL::Digest::SHA256.new
     
-    l = Ledger.create!(public_key: @ledger_key.public_key.to_pem,
-                       name: 'Moonbucks', url: 'http://moonbucks.com')
+    l = create_basic_ledger('Moonbucks', @ledger_key.public_key.to_pem)
     @s = l.accounts.create!(public_key: @source_key.public_key.to_pem)
     @d = l.accounts.create!(public_key: @destination_key.public_key.to_pem)
     l.update_attribute :primary_account, @s

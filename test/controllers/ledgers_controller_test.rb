@@ -33,7 +33,7 @@ class LedgersControllerTest < ActionController::TestCase
   end
   
   test "duplicate POST should not be successful" do
-    Ledger.create(@ledger_data)
+    create_ledger
     post :create, ledger: @ledger_data, primary_account: @account_data
     refute_equal '201', response.code
   end
@@ -47,13 +47,13 @@ class LedgersControllerTest < ActionController::TestCase
   
   test "valid POST which creates a resource should broadcast to the other nodes" do
     post :prepare, valid_prepare_post
-    assert_requested(:post, 'localtest-2/ledgers')
+    assert_requested(:post, 'localtest-2/ledgers/prepare')
   end
   
   test "valid POST which confirms an existing resource should not re-broadcast" do
-    Ledger.create!(@ledger_data)
+    create_ledger
     post :prepare, valid_prepare_post
-    assert_requested(:post, 'localtest-2/ledgers', times: 1)
+    assert_requested(:post, 'localtest-2/ledgers/prepare', times: 1)
   end
   
   # Prepare records
@@ -64,14 +64,14 @@ class LedgersControllerTest < ActionController::TestCase
   end
   
   test "valid POST which confirms an existing resource should sign a prepare record" do
-    ledger = Ledger.create!(@ledger_data)
+    ledger = create_ledger
     assert_difference 'ledger.prepare_confirmations.signed.count', 1 do
       post :prepare, valid_prepare_post
     end
   end
   
   test "POST with invalid signature should not sign a prepare record" do
-    ledger = Ledger.create!(@ledger_data)
+    ledger = create_ledger
     assert_no_difference 'ledger.prepare_confirmations.signed.count' do
       post :prepare, ledger: @ledger_data,
                      primary_account: @account_data,
@@ -81,7 +81,7 @@ class LedgersControllerTest < ActionController::TestCase
   
   # Commit records
   test "POST with commit should sign a commit record" do
-    ledger = Ledger.create!(@ledger_data)
+    ledger = create_ledger
     assert_difference 'ledger.commit_confirmations.signed.count', 1 do
       post :commit, valid_commit_post
     end
@@ -103,4 +103,10 @@ private
     data.merge({ authentication: { node: 'localtest-2', signature: signature } })
   end
   
+  def create_ledger
+    ledger = Ledger.new(@ledger_data)
+    ledger.primary_account = ledger.accounts.build(@account_data)
+    ledger.save!
+    ledger
+  end
 end

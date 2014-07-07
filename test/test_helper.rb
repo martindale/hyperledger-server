@@ -20,4 +20,12 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  def create_basic_ledger(name, public_key)
+    name ||= 'Moonbucks'
+    public_key ||= OpenSSL::PKey::RSA.new(2048).public_key.to_pem
+    ledger = Ledger.new(public_key: public_key, name: name, url: 'http://moonbucks.com')
+    ledger.primary_account = ledger.accounts.build(public_key: public_key)
+    ledger.save!
+    ledger
+  end
 end

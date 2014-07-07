@@ -6,13 +6,17 @@ class Ledger < ActiveRecord::Base
   belongs_to  :primary_account, class_name: 'Account'
   has_many    :issues
   
-  validates_presence_of :public_key, :name, :url
+  validates_presence_of :public_key, :name, :url, :primary_account
   validates_uniqueness_of :name
   validates :public_key, rsa_public_key: true
   
   after_create do |ledger|
-    params = LedgerSerializer.new(ledger).as_json
-    ConsensusNode.broadcast(:ledger, params)
+    ConsensusNode.broadcast_prepare(:ledger, broadcast_params)
+  end
+  
+  def broadcast_params
+    { ledger: attributes.slice(:public_key, :name, :url),
+      primary_account: { public_key: primary_account.public_key }}
   end
   
 end

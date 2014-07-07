@@ -18,11 +18,11 @@ class ConsensusNodeTest < ActiveSupport::TestCase
     refute ConsensusNode.find_by_url('test').valid_sig?(bad_sign, 'test')
   end
   
-  test '.broadcast sends a post to all other nodes' do
+  test '.broadcast_prepare sends a post to all other nodes' do
     data = {test: 'test'}
-    stub_request(:post, 'test/ledgers')
-    ConsensusNode.broadcast(:ledger, data)
-    assert_requested(:post, 'test/ledgers', times: 1)
+    stub_request(:post, 'test/ledgers/prepare')
+    ConsensusNode.broadcast_prepare(:ledger, data)
+    assert_requested(:post, 'test/ledgers/prepare', times: 1)
   end
   
   test '.quorum returns an int > 2/3 of node count - e.g. 3 for 3' do
