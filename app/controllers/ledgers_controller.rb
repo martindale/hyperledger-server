@@ -54,7 +54,7 @@ private
   end
   
   def prepare_params
-    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
+    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'].gsub('\n',"\n"))
     digest = OpenSSL::Digest::SHA256.new
     signature = Base64.encode64 key.sign(digest, combined_params.to_json)
     { node: ENV['NODE_URL'], signature: signature }
