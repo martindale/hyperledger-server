@@ -19,10 +19,4 @@ private
     params.fetch(:authentication, {}).permit(:node, :signature)
   end
   
-  def confirmed?(data)
-    return false if authentication_params.empty?
-    node = ConsensusNode.find_by_url(authentication_params[:node])
-    node.valid_sig?(node, authentication_params[:signature], data)
-  end
-  
 end
