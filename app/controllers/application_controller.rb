@@ -22,7 +22,7 @@ private
   def confirmed?(data)
     return false if authentication_params.empty?
     node = ConsensusNode.find_by_url(authentication_params[:node])
-    node.valid_confirmation?(node, authentication_params[:signature], data)
+    node.valid_sig?(node, authentication_params[:signature], data)
   end
   
 end

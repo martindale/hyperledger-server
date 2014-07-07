@@ -1,5 +1,6 @@
 class Ledger < ActiveRecord::Base
   include Confirmable
+  include Signable
   
   has_many    :accounts
   belongs_to  :primary_account, class_name: 'Account'
@@ -13,4 +14,5 @@ class Ledger < ActiveRecord::Base
     params = LedgerSerializer.new(ledger).as_json
     ConsensusNode.broadcast(:ledger, params)
   end
+  
 end

@@ -1,5 +1,6 @@
 class Account < ActiveRecord::Base
   include Confirmable
+  include Signable
   
   belongs_to :ledger
   

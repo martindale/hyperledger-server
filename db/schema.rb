@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140701091659) do
+ActiveRecord::Schema.define(version: 20140702090053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,8 +53,9 @@ ActiveRecord::Schema.define(version: 20140701091659) do
     t.integer  "amount"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "prepared",   default: false
-    t.boolean  "committed",  default: false
+    t.boolean  "prepared",         default: false
+    t.boolean  "committed",        default: false
+    t.text     "client_signature"
   end
 
   create_table "ledgers", force: true do |t|
@@ -88,8 +89,9 @@ ActiveRecord::Schema.define(version: 20140701091659) do
     t.integer  "destination_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "prepared",       default: false
-    t.boolean  "committed",      default: false
+    t.boolean  "prepared",         default: false
+    t.boolean  "committed",        default: false
+    t.text     "client_signature"
   end
 
 end

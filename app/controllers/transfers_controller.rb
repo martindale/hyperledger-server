@@ -3,17 +3,8 @@ class TransfersController < ApplicationController
   respond_to :json
   
   def create
-    raise 'Invalid signature' unless valid_signature?
-    
-    if confirmed?(combined_params)
-      transfer = Transfer.find_or_create_by(associated_transfer_params)
-    else
-      transfer = Transfer.create(associated_transfer_params)
-    end
-    
+    transfer = Transfer.create(associated_transfer_params)
     respond_with transfer
-  rescue
-    head :unprocessable_entity
   end
   
 private
@@ -23,7 +14,7 @@ private
   end
   
   def associated_transfer_params
-    { source: source, destination: destination, amount: transfer_params[:amount] }
+    { source: source, destination: destination, amount: transfer_params[:amount], client_signature: params[:signature] }
   end
   
   def combined_params
@@ -36,14 +27,6 @@ private
   
   def destination
     Account.find_by_code(transfer_params[:destination])
-  end
-  
-  def valid_signature?
-    digest = OpenSSL::Digest::SHA256.new
-    key = OpenSSL::PKey::RSA.new(source.public_key)
-    key.verify(digest, Base64.decode64(params[:signature]), transfer_params.to_json)
-  rescue
-    false
   end
   
 end

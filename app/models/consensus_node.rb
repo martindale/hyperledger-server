@@ -1,4 +1,6 @@
 class ConsensusNode < ActiveRecord::Base
+  include Signable
+  
   validates_presence_of :url, :public_key
   validates_uniqueness_of :url
   
@@ -17,14 +19,6 @@ class ConsensusNode < ActiveRecord::Base
                       content_type: :json,
                       accept: :json
     end
-  end
-  
-  def valid_confirmation?(signature, data)
-    key.verify(OpenSSL::Digest::SHA256.new, Base64.decode64(signature), data.to_json)
-  end
-  
-  def key
-    OpenSSL::PKey::RSA.new(public_key)
   end
   
 private

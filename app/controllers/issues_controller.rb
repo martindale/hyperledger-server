@@ -3,17 +3,8 @@ class IssuesController < ApplicationController
   respond_to :json
   
   def create
-    raise 'Invalid signature' unless valid_signature?
-    
-    if confirmed?(combined_params)
-      issue = Issue.find_or_create_by(associated_issue_params)
-    else
-      issue = Issue.create(associated_issue_params)
-    end
-    
+    issue = Issue.create(associated_issue_params)
     respond_with issue
-  rescue
-    head :unprocessable_entity
   end
   
 private
@@ -23,7 +14,7 @@ private
   end
   
   def associated_issue_params
-    { ledger: ledger, amount: issue_params[:amount] }
+    { ledger: ledger, amount: issue_params[:amount], client_signature: params[:signature] }
   end
   
   def ledger
@@ -32,14 +23,6 @@ private
   
   def combined_params
     { issue: issue_params, signature: params[:signature] }
-  end
-  
-  def valid_signature?
-    digest = OpenSSL::Digest::SHA256.new
-    key = OpenSSL::PKey::RSA.new(ledger.public_key)
-    key.verify(digest, Base64.decode64(params[:signature]), issue_params.to_json)
-  rescue
-    false
   end
   
 end

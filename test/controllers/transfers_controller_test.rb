@@ -15,7 +15,9 @@ class TransfersControllerTest < ActionController::TestCase
     @d = l.accounts.create!(public_key: @destination_key.public_key.to_pem)
     l.update_attribute :primary_account, @s
     
-    l.issues.create!(amount: 2000)
+    issue_params = { ledger: 'Moonbucks', amount: 2000 }
+    sign = Base64.encode64(@ledger_key.sign(OpenSSL::Digest::SHA256.new, issue_params.to_json))
+    l.issues.create!(amount: 2000, client_signature: sign)
     stub_request(:post, /.*/)
   end
   
