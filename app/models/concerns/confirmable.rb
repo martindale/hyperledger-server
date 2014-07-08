@@ -19,7 +19,9 @@ module Confirmable
     if prepare
       prepare.signature = signature
       prepare.save
+      
       self.prepared = true if prepare_confirmations.signed.count >= ConsensusNode.quorum
+      save
     end
   end
   
@@ -28,7 +30,9 @@ module Confirmable
     if commit
       commit.signature = signature
       commit.save
+      
       self.committed = true if commit_confirmations.signed.count >= ConsensusNode.quorum
+      save
     end
   end
   
