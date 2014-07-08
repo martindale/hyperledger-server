@@ -20,8 +20,11 @@ module Confirmable
       prepare.signature = signature
       prepare.save
       
-      self.prepared = true if prepare_confirmations.signed.count >= ConsensusNode.quorum
-      save
+      if prepare_confirmations.signed.count >= ConsensusNode.quorum && !prepared
+        self.prepared = true
+        save
+        ConsensusNode.broadcast_commit(self.class.name.downcase.to_sym, broadcast_params)
+      end
     end
   end
   
@@ -31,8 +34,10 @@ module Confirmable
       commit.signature = signature
       commit.save
       
-      self.committed = true if commit_confirmations.signed.count >= ConsensusNode.quorum
-      save
+      if commit_confirmations.signed.count >= ConsensusNode.quorum && !committed
+        self.committed = true
+        save
+      end
     end
   end
   
