@@ -22,15 +22,11 @@ class TransfersController < ApplicationController
 private
   
   def transfer_params
-    params.require(:transfer).permit(:source, :destination, :amount)
+    params.require(:transfer).permit(:source, :destination, :amount, :client_signature)
   end
   
   def associated_transfer_params
-    { source: source, destination: destination, amount: transfer_params[:amount], client_signature: params[:signature] }
-  end
-  
-  def combined_params
-    { transfer: transfer_params }
+    transfer_params.merge({ source: source, destination: destination })
   end
   
   def source

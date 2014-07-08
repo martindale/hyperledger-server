@@ -61,13 +61,13 @@ private
   def valid_post
     data = { source: @s.code, destination: @d.code, amount: 500 }
     sig  = Base64.encode64 @source_key.sign(@digest, data.to_json)
-    post :create, transfer: data, signature: sig, format: :json
+    post :create, transfer: data.merge({client_signature: sig}), format: :json
   end
   
   def invalid_post
     data = { source: @s.code, destination: @d.code, amount: 500 }
     sig  = Base64.encode64 @destination_key.sign(@digest, data.to_json)
-    post :create, transfer: data, signature: sig, format: :json
+    post :create, transfer: data.merge({client_signature: sig}), format: :json
   end
   
 end

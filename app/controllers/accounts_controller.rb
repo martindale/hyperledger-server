@@ -38,8 +38,4 @@ private
     { public_key: account_params[:public_key], ledger: ledger }
   end
   
-  def combined_params
-    { account: account_params }
-  end
-  
 end

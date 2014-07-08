@@ -51,19 +51,4 @@ private
     params.fetch(:primary_account).permit(:public_key)
   end
   
-  def combined_params
-    { ledger: ledger_params, primary_account: primary_account_params }
-  end
-  
-  def combined_commit_params
-    combined_params.merge({ commit: true })
-  end
-  
-  def prepare_params
-    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'].gsub('\n',"\n"))
-    digest = OpenSSL::Digest::SHA256.new
-    signature = Base64.encode64 key.sign(digest, combined_params.to_json)
-    { node: ENV['NODE_URL'], signature: signature }
-  end
-  
 end

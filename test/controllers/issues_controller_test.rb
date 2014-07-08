@@ -36,14 +36,14 @@ private
   def valid_post
     data = { ledger: 'Moonbucks', amount: 1000 }
     sig  = Base64.encode64 @key.sign(OpenSSL::Digest::SHA256.new, data.to_json)
-    post :create, issue: data, signature: sig, format: :json
+    post :create, issue: data.merge({client_signature: sig}), format: :json
   end
   
   def invalid_post
     bad_key = OpenSSL::PKey::RSA.new(2048)
     data = { ledger: 'Moonbucks', amount: 1000 }
     sig  = Base64.encode64 bad_key.sign(OpenSSL::Digest::SHA256.new, data.to_json)
-    post :create, issue: data, signature: sig, format: :json
+    post :create, issue: data.merge({client_signature: sig}), format: :json
   end
   
 end

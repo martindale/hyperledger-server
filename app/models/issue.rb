@@ -28,7 +28,7 @@ private
   end
   
   def broadcast_params
-    {issue: {ledger: ledger.name, amount: amount}}
+    {issue: {ledger: attributes.slice('name', 'amount', 'client_signature')}}
   end
   
 end

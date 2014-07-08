@@ -26,19 +26,15 @@ class IssuesController < ApplicationController
 private
   
   def issue_params
-    params.require(:issue).permit(:ledger, :amount)
+    params.require(:issue).permit(:ledger, :amount, :client_signature)
   end
   
   def associated_issue_params
-    { ledger: ledger, amount: issue_params[:amount], client_signature: params[:signature] }
+    issue_params.merge({ ledger: ledger })
   end
   
   def ledger
     @ledger ||= Ledger.find_by_name(issue_params[:ledger])
-  end
-  
-  def combined_params
-    { issue: issue_params, signature: params[:signature] }
   end
   
 end
