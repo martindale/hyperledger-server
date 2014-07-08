@@ -12,7 +12,7 @@ class ConsensusNode < ActiveRecord::Base
   def self.broadcast_prepare(resource, data)
     broadcast_urls.each do |url|
       RestClient.post "#{url}/#{resource.to_s.pluralize}/prepare",
-                      data.merge({ authentication: auth_params(data) }),
+                      data.merge({ authentication: auth_params(data) }).to_json,
                       content_type: :json,
                       accept: :json
     end
@@ -22,7 +22,7 @@ class ConsensusNode < ActiveRecord::Base
     data.merge!(commit: true)
     broadcast_urls.each do |url|
       RestClient.post "#{url}/#{resource.to_s.pluralize}/commit",
-                      data.merge({ authentication: auth_params(data) }),
+                      data.merge({ authentication: auth_params(data) }).to_json,
                       content_type: :json,
                       accept: :json
     end

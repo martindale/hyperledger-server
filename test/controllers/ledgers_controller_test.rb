@@ -38,6 +38,12 @@ class LedgersControllerTest < ActionController::TestCase
     refute_equal '201', response.code
   end
   
+  test "valid POST should broadcast identical prepare message" do
+    post :create, ledger: @ledger_data, primary_account: @account_data
+    assert_requested(:post, 'localtest-2/ledgers/prepare',
+                     body: hash_including({ledger: @ledger_data, primary_account: @account_data}))
+  end
+  
   # Prepare messages
   test "valid POST with signature should create resource" do
     assert_difference 'Ledger.count', 1 do
