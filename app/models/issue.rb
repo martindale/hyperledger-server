@@ -2,7 +2,7 @@ class Issue < ActiveRecord::Base
   include Confirmable
   
   validates_presence_of :ledger, :amount, :resource_signature
-  validate :valid_signature
+  validate :valid_resource_signature
   
   belongs_to :ledger
   
@@ -17,7 +17,7 @@ class Issue < ActiveRecord::Base
   
 private
   
-  def valid_signature
+  def valid_resource_signature
     unless ledger.valid_sig?(resource_signature, signable_string)
       errors.add :resource_signature, 'is not valid'
     end

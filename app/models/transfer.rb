@@ -2,7 +2,7 @@ class Transfer < ActiveRecord::Base
   include Confirmable
   
   validates_presence_of :source, :destination, :amount, :resource_signature
-  validate :valid_signature, :same_ledger, :sufficient_balance
+  validate :valid_resource_signature, :same_ledger, :sufficient_balance
   
   belongs_to :source, class_name: 'Account'
   belongs_to :destination, class_name: 'Account'
@@ -22,7 +22,7 @@ class Transfer < ActiveRecord::Base
   
 private
   
-  def valid_signature
+  def valid_resource_signature
     unless source.valid_sig?(resource_signature, signable_string)
       errors.add :resource_signature, 'is not valid'
     end
