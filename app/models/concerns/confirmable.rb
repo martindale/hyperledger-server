@@ -23,6 +23,12 @@ module Confirmable
       if prepare_confirmations.signed.count >= ConsensusNode.quorum && !prepared
         self.prepared = true
         save
+        
+        key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'].gsub('\n',"\n"))
+        digest = OpenSSL::Digest::SHA256.new
+        signature = Base64.encode64 key.sign(digest, broadcast_params.to_json)
+        add_commit(ENV['NODE_URL'], signature)
+        
         ConsensusNode.broadcast_commit(self.class.name.downcase.to_sym, broadcast_params)
       end
     end
