@@ -12,4 +12,5 @@ Hyperledger::Application.routes.draw do
   resources :issues,    only: [:show, :create], concerns: :confirmable
   resources :transfers, only: [:show, :create], concerns: :confirmable
   
+  resources :consensus_nodes, only: :index
 end
