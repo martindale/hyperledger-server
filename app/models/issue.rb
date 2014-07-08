@@ -1,7 +1,7 @@
 class Issue < ActiveRecord::Base
   include Confirmable
   
-  validates_presence_of :ledger, :amount, :client_signature
+  validates_presence_of :ledger, :amount, :resource_signature
   validate :valid_signature
   
   belongs_to :ledger
@@ -18,8 +18,8 @@ class Issue < ActiveRecord::Base
 private
   
   def valid_signature
-    unless ledger.valid_sig?(client_signature, signable_string)
-      errors.add :client_signature, 'is not valid'
+    unless ledger.valid_sig?(resource_signature, signable_string)
+      errors.add :resource_signature, 'is not valid'
     end
   end
   
@@ -28,7 +28,7 @@ private
   end
   
   def broadcast_params
-    {issue: {ledger: attributes.slice('name', 'amount', 'client_signature')}}
+    {issue: {ledger: attributes.slice('name', 'amount', 'resource_signature')}}
   end
   
 end

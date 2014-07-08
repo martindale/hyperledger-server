@@ -21,6 +21,12 @@ class IssuesControllerTest < ActionController::TestCase
     assert_equal 1000, Account.first.balance
   end
   
+  test 'foo' do
+    @node_key = OpenSSL::PKey::RSA.new 2048
+    @node = ConsensusNode.create!(url: 'localtest-2', public_key: @node_key.public_key.to_pem)
+    valid_post
+  end
+  
   test "invalid POST should be unsuccessful" do
     invalid_post
     assert_equal '422', response.code
@@ -36,14 +42,14 @@ private
   def valid_post
     data = { ledger: 'Moonbucks', amount: 1000 }
     sig  = Base64.encode64 @key.sign(OpenSSL::Digest::SHA256.new, data.to_json)
-    post :create, issue: data.merge({client_signature: sig}), format: :json
+    post :create, issue: data.merge({resource_signature: sig}), format: :json
   end
   
   def invalid_post
     bad_key = OpenSSL::PKey::RSA.new(2048)
     data = { ledger: 'Moonbucks', amount: 1000 }
     sig  = Base64.encode64 bad_key.sign(OpenSSL::Digest::SHA256.new, data.to_json)
-    post :create, issue: data.merge({client_signature: sig}), format: :json
+    post :create, issue: data.merge({resource_signature: sig}), format: :json
   end
   
 end

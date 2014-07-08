@@ -22,7 +22,7 @@ class TransfersController < ApplicationController
 private
   
   def transfer_params
-    params.require(:transfer).permit(:source, :destination, :amount, :client_signature)
+    params.require(:transfer).permit(:source, :destination, :amount, :resource_signature)
   end
   
   def associated_transfer_params

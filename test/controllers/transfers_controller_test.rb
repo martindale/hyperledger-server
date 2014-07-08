@@ -16,7 +16,7 @@ class TransfersControllerTest < ActionController::TestCase
     
     issue_params = { ledger: 'Moonbucks', amount: 2000 }
     sign = Base64.encode64(@ledger_key.sign(OpenSSL::Digest::SHA256.new, issue_params.to_json))
-    l.issues.create!(amount: 2000, client_signature: sign)
+    l.issues.create!(amount: 2000, resource_signature: sign)
     stub_request(:post, /.*/)
   end
   
@@ -61,13 +61,13 @@ private
   def valid_post
     data = { source: @s.code, destination: @d.code, amount: 500 }
     sig  = Base64.encode64 @source_key.sign(@digest, data.to_json)
-    post :create, transfer: data.merge({client_signature: sig}), format: :json
+    post :create, transfer: data.merge({resource_signature: sig}), format: :json
   end
   
   def invalid_post
     data = { source: @s.code, destination: @d.code, amount: 500 }
     sig  = Base64.encode64 @destination_key.sign(@digest, data.to_json)
-    post :create, transfer: data.merge({client_signature: sig}), format: :json
+    post :create, transfer: data.merge({resource_signature: sig}), format: :json
   end
   
 end

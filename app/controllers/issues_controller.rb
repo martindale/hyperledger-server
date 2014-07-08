@@ -26,7 +26,7 @@ class IssuesController < ApplicationController
 private
   
   def issue_params
-    params.require(:issue).permit(:ledger, :amount, :client_signature)
+    params.require(:issue).permit(:ledger, :amount, :resource_signature)
   end
   
   def associated_issue_params
