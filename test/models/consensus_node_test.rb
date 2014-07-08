@@ -22,6 +22,7 @@ class ConsensusNodeTest < ActiveSupport::TestCase
     data = {test: 'test'}
     stub_request(:post, 'test/ledgers/prepare')
     ConsensusNode.broadcast_prepare(:ledger, data)
+    sleep 0.1 # Ugh - temp measure
     assert_requested(:post, 'test/ledgers/prepare', times: 1)
   end
   
