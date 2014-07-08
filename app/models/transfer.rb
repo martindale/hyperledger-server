@@ -7,13 +7,13 @@ class Transfer < ActiveRecord::Base
   belongs_to :source, class_name: 'Account'
   belongs_to :destination, class_name: 'Account'
   
-  after_create do |transfer|
+  def after_commit
     transaction do
       source.lock!
       destination.lock!
       
-      source.balance -= transfer.amount
-      destination.balance += transfer.amount
+      source.balance -= amount
+      destination.balance += amount
       
       source.save!
       destination.save!

@@ -6,11 +6,11 @@ class Issue < ActiveRecord::Base
   
   belongs_to :ledger
   
-  before_create do |issue|
-    account = issue.ledger.primary_account
+  def after_commit
+    account = ledger.primary_account
     transaction do
       account.lock!
-      account.balance += issue.amount
+      account.balance += amount
       account.save!
     end
   end

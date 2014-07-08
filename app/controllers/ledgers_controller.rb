@@ -13,12 +13,7 @@ class LedgersController < ApplicationController
   def create
     ledger = Ledger.new(ledger_params)
     ledger.primary_account = ledger.accounts.build(primary_account_params)
-    
-    if ledger.save
-      ledger.add_prepare(prepare_params[:node], prepare_params[:signature])
-      ledger.primary_account.add_prepare(prepare_params[:node], prepare_params[:signature])
-    end
-    
+    ledger.save
     respond_with ledger
   end
   
