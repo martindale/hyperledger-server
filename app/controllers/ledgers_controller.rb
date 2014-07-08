@@ -16,6 +16,7 @@ class LedgersController < ApplicationController
     
     if ledger.save
       ledger.add_prepare(prepare_params[:node], prepare_params[:signature])
+      ledger.primary_account.add_prepare(prepare_params[:node], prepare_params[:signature])
     end
     
     respond_with ledger
@@ -26,6 +27,7 @@ class LedgersController < ApplicationController
     ledger.primary_account = ledger.accounts.find_or_initialize_by(primary_account_params)
     if ledger.save
       ledger.add_prepare(authentication_params[:node], authentication_params[:signature])
+      ledger.primary_account.add_prepare(authentication_params[:node], authentication_params[:signature])
       head :no_content
     else
       head :unprocessable_entity
@@ -37,6 +39,7 @@ class LedgersController < ApplicationController
     ledger.primary_account = ledger.accounts.find_or_initialize_by(primary_account_params)
     if ledger.save
       ledger.add_commit(authentication_params[:node], authentication_params[:signature])
+      ledger.primary_account.add_commit(authentication_params[:node], authentication_params[:signature])
       head :no_content
     else
       head :unprocessable_entity

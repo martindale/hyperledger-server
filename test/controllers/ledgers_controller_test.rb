@@ -63,8 +63,8 @@ class LedgersControllerTest < ActionController::TestCase
   end
   
   # Prepare records
-  test "valid POST should sign prepare record for self" do
-    assert_difference 'PrepareConfirmation.signed.count', 1 do
+  test "valid POST should sign prepare record for self and primary account" do
+    assert_difference 'PrepareConfirmation.signed.count', 2 do
       post :create, ledger: @ledger_data, primary_account: @account_data
     end
   end
