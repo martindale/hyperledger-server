@@ -25,10 +25,12 @@ class ConsensusNode < ActiveRecord::Base
   def self.broadcast_commit(resource, data)
     data.merge!(commit: true)
     broadcast_urls.each do |url|
-      RestClient.post("#{url}/#{resource.to_s.pluralize}/commit",
-                      data.merge({ authentication: auth_params(data) }).to_json,
-                      content_type: :json,
-                      accept: :json)
+      Thread.new do
+        RestClient.post("#{url}/#{resource.to_s.pluralize}/commit",
+                        data.merge({ authentication: auth_params(data) }).to_json,
+                        content_type: :json,
+                        accept: :json)
+      end
     end
   rescue => e
     logger.warn 'Commit POST error'
