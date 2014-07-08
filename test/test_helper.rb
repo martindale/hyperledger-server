@@ -28,4 +28,15 @@ class ActiveSupport::TestCase
     ledger.save!
     ledger
   end
+  
+  def sign(key, data)
+    digest = OpenSSL::Digest::SHA256.new
+    signature = Base64.encode64 key.sign(digest, data.to_json)
+  end
+  
+  def self_confirmation(data)
+    key = OpenSSL::PKey::RSA.new(ENV['PRIVATE_KEY'])
+    { confirmation: { node: ENV['NODE_URL'], signature: sign(key, data) }}
+  end
+  
 end

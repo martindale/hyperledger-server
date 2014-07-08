@@ -96,17 +96,13 @@ class LedgersControllerTest < ActionController::TestCase
 private
   
   def valid_prepare_post
-    digest = OpenSSL::Digest::SHA256.new
     data = { ledger: @ledger_data, primary_account: @account_data }
-    signature = Base64.encode64 @node_key.sign(digest, data.to_json)
-    data.merge({ authentication: { node: 'localtest-2', signature: signature } })
+    data.merge({ authentication: { node: 'localtest-2', signature: sign(@node_key, data) } })
   end
   
   def valid_commit_post
-    digest = OpenSSL::Digest::SHA256.new
     data = { ledger: @ledger_data, primary_account: @account_data, commit: true }
-    signature = Base64.encode64 @node_key.sign(digest, data.to_json)
-    data.merge({ authentication: { node: 'localtest-2', signature: signature } })
+    data.merge({ authentication: { node: 'localtest-2', signature: sign(@node_key, data) } })
   end
   
   def create_ledger

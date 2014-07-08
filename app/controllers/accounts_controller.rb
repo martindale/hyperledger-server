@@ -16,13 +16,13 @@ class AccountsController < ApplicationController
   end
   
   def prepare
-    account = Issue.find_or_create_by(associated_account_params)
+    account = Account.find_or_create_by(associated_account_params)
     account.add_prepare(authentication_params[:node], authentication_params[:signature])
     respond_with account
   end
   
   def commit
-    account = Issue.find_or_create_by(associated_account_params)
+    account = Account.find_or_create_by(associated_account_params)
     account.add_commit(authentication_params[:node], authentication_params[:signature])
     respond_with issaccountue
   end

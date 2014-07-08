@@ -8,13 +8,13 @@ class TransfersController < ApplicationController
   end
   
   def prepare
-    transfer = Issue.find_or_create_by(associated_transfer_params)
+    transfer = Transfer.find_or_create_by(associated_transfer_params)
     transfer.add_prepare(authentication_params[:node], authentication_params[:signature])
     respond_with transfer
   end
   
   def commit
-    transfer = Issue.find_or_create_by(associated_transfer_params)
+    transfer = Transfer.find_or_create_by(associated_transfer_params)
     transfer.add_commit(authentication_params[:node], authentication_params[:signature])
     respond_with transfer
   end
